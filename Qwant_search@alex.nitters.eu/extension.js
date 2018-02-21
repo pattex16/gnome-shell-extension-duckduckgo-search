@@ -21,10 +21,12 @@ function logDebug() {
   }
 }
 
-function makeResult(qwantResult, id) {
+function makeResult(name, description, icon, id) {
   return {
     'id': id,
-    'name': qwantResult
+    'name': name,
+    'description': description,
+    'icon': icon
   }
 }
 
@@ -37,6 +39,17 @@ function makeLaunchContext(params) {
   let launchContext = global.create_app_launch_context(params.timestamp, params.workspace);
 
   return launchContext;
+}
+
+function countProperties(obj) {
+    var count = 0;
+
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            ++count;
+    }
+
+    return count;
 }
 
 const QwantSearchProvider = new Lang.Class({
@@ -74,28 +87,39 @@ const QwantSearchProvider = new Lang.Class({
   getResultMeta: function(resultId) {
     let result = this.qwantResults.get(resultId);
     let name = result.name;
+    let description = result.description;
     logDebug("result meta for name: "+result.name);
     logDebug("result meta: ", resultId);
     return {
       'id': resultId,
-      'name': " ",
-      'description': name,
+      'name': name,
+      'description': description,
       'createIcon' : function(size) {}
     }
   },
 
   getSuggestions: function(terms) {
-    var suggestions = ["hello", "hello world", "hello kitty","hello darkness"];
+    var suggestions = {0: {type: "suggestion", name: "hello", url: searchUrl + encodeURIComponent("hello")}, 1: {type: "suggestion", name: "hello2", url: searchUrl + encodeURIComponent("hello2")}, 2: {type: "result", name: "Le monde", description: "https://lemonde.fr/", url:"https://lemonde.fr"}};
     return suggestions;
+
+/********************TODO: Get suggestions and results from Qwant********************/
+
+
   },
 
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
-    this.qwantResults.set(terms.join(" "), makeResult("Search \"" + terms.join(" ") + "\" with Qwant", '0'));
+    this.qwantResults.set(searchUrl + encodeURIComponent(terms.join(" ")), makeResult("Search \"" + terms.join(" ") + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(terms.join(" "))));
 
     //var suggestions = ["hello", "hello world", "hello kitty"];
     var suggestions = this.getSuggestions(terms)
-    for (var i = 0; i < suggestions.length; i++) { this.qwantResults.set(suggestions[i], makeResult(suggestions[i], '1')); }
+    for (var i = 0; i < countProperties(suggestions); i++) {
+      logDebug("type:" + suggestions[i].type);
+      if (suggestions[i].type == "suggestion") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url)); }
+      if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, suggestions[i].icon, suggestions[i].url)); }
+      if (suggestions[i].type == "result") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
+      //this.qwantResults.set(suggestions[i]., makeResult(suggestions[i], '1'));
+    }
     logDebug("ProcessTerms");
     callback(this._getResultSet(terms));
   },
@@ -103,7 +127,10 @@ const QwantSearchProvider = new Lang.Class({
   activateResult: function(resultId, terms) {
     var result = this.qwantResults[resultId];
     logDebug("activateResult: " + resultId);
-    var url = searchUrl + encodeURIComponent(resultId)
+    //if (result.type == "suggestion") {var url = searchUrl + encodeURIComponent(result.name)}
+    //if (result.type == "result") {var url = encodeURIComponent(result.url)}
+    var url = resultId;
+    logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
       url,
       makeLaunchContext({})
