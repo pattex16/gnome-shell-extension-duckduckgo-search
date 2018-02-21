@@ -8,6 +8,7 @@ const Main = imports.ui.main;
 const Shell = imports.gi.Shell;
 const Gio = imports.gi.Gio;
 const Params = imports.misc.params;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 var qwantSearchProvider = null;
 
@@ -42,14 +43,14 @@ function makeLaunchContext(params) {
 }
 
 function countProperties(obj) {
-    var count = 0;
+  var count = 0;
 
-    for(var prop in obj) {
-        if(obj.hasOwnProperty(prop))
-            ++count;
-    }
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop))
+    ++count;
+  }
 
-    return count;
+  return count;
 }
 
 const QwantSearchProvider = new Lang.Class({
@@ -61,7 +62,7 @@ const QwantSearchProvider = new Lang.Class({
     this.id = 'qwant-search-' + title;
     this.appInfo = {
       get_name : function() {return 'Qwant Search';},
-      get_icon : function() {return Gio.icon_new_for_string("/usr/share/icons/gnome/256x256/actions/system-search.png");},
+      get_icon : function() {return Gio.icon_new_for_string(Me.path + "/icons/qwant_logo.png");},
       get_id : function() {return this.id;}
     };
     this.qwantResults = new Map();
@@ -99,11 +100,15 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getSuggestions: function(terms) {
-    var suggestions = {0: {type: "suggestion", name: "hello", url: searchUrl + encodeURIComponent("hello")}, 1: {type: "suggestion", name: "hello2", url: searchUrl + encodeURIComponent("hello2")}, 2: {type: "result", name: "Le monde", description: "https://lemonde.fr/", url:"https://lemonde.fr"}};
+    var suggestions = {
+      0: {type: "suggestion", name: "hello world", url: searchUrl + encodeURIComponent("hello world")},
+      1: {type: "suggestion", name: "hello bank", url: searchUrl + encodeURIComponent("hello bank")},
+      2: {type: "result", name: "Hello World - Wikipedia", description: "https://fr.wikipedia.org/wiki/Hello_world", url:"https://fr.wikipedia.org/wiki/Hello_world"},
+      3: {type: "result", name: "Hello World, A Merkle Company", description: "https://www.hellowold.com", url:"https://www.hellowold.com"}
+    };
     return suggestions;
 
-/********************TODO: Get suggestions and results from Qwant********************/
-
+    /********************TODO: Get suggestions and results from Qwant********************/
 
   },
 
