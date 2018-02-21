@@ -14,7 +14,7 @@ const Soup = imports.gi.Soup;
 var qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
-const suggestionsUrl = "https://api.qwant.com/api/suggest";
+const suggestionsUrl =  "https://api.qwant.com/api/suggest";
 let _httpSession = new Soup.Session();
 
 var debug = true;
@@ -104,8 +104,9 @@ const QwantSearchProvider = new Lang.Class({
 
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
-    this.qwantResults.set(searchUrl + encodeURIComponent(terms.join(" ")), makeResult("Search \"" + terms.join(" ") + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(terms.join(" "))));
-    logDebug("ProcessTerms");
+    var joined = terms.join(" ");
+    this.qwantResults.set(searchUrl + encodeURIComponent(joined), makeResult("Search \"" + joined + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(joined)));
+    logDebug("ProcessTerms: " + joined);
     this.getSuggestions(terms, callback)
   },
 
@@ -115,7 +116,7 @@ const QwantSearchProvider = new Lang.Class({
     let request = Soup.form_request_new_from_hash(
       'GET',
       suggestionsUrl,
-      {'q':encodeURIComponent(terms)}
+      {'q':terms.join(" ")}
     );
     logDebug("getSuggestions: ")
 
@@ -126,17 +127,16 @@ const QwantSearchProvider = new Lang.Class({
           let json = (JSON.parse(response.response_body.data).data.items);
           logDebug("bodydata", response.response_body.data);
           if (json[0].value.length < 1) {
-            var suggestion = {};
+            var suggestions = {0: {}};
             logDebug("No results")
-            return suggestions;
           }
           else {
-            var suggestion = {};
+            var suggestions = {};
             for (var i = 0; i < countProperties(json); i++) {
               logDebug("Adding suggestion: " + json[i].value)
+              if (json[i].value == terms.join(" ")) {continue};
               suggestions[i] = {type: "suggestion", name: json[i].value, url: searchUrl + encodeURIComponent(json[i].value)}
             }
-            for (var i = 0; i < countProperties(json); i++) {logDebug("Name: " + suggestions[i].name + " Type: " + suggestions[i].type)}
           }
         }
         else {
@@ -149,13 +149,12 @@ const QwantSearchProvider = new Lang.Class({
 
 
 
-    /********************TODO: Get results from Qwant********************/
+    /********************TODO: Get suggestions and results from Qwant********************/
 
   },
 
   displaySuggestions: function(suggestions, callback, terms) {
     for (var i = 0; i < countProperties(suggestions); i++) {
-      logDebug("type:" + suggestions[i].type);
       if (suggestions[i].type == "suggestion") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url)); }
       if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, suggestions[i].icon, suggestions[i].url)); }
       if (suggestions[i].type == "result") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
