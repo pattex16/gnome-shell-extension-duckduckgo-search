@@ -107,6 +107,7 @@ const QwantSearchProvider = new Lang.Class({
     var joined = terms.join(" ");
     this.qwantResults.set(searchUrl + encodeURIComponent(joined), makeResult("Search \"" + joined + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(joined)));
     logDebug("ProcessTerms: " + joined);
+    logDebug("Search with: " + joined);
     this.getSuggestions(terms, callback)
   },
 
@@ -126,18 +127,12 @@ const QwantSearchProvider = new Lang.Class({
 
           let json = (JSON.parse(response.response_body.data).data.items);
           logDebug("bodydata", response.response_body.data);
-          if (json[0].value.length < 1) {
             var suggestions = {0: {}};
-            logDebug("No results")
-          }
-          else {
-            var suggestions = {};
             for (var i = 0; i < countProperties(json); i++) {
               logDebug("Adding suggestion: " + json[i].value)
               if (json[i].value == terms.join(" ")) {continue};
               suggestions[i] = {type: "suggestion", name: json[i].value, url: searchUrl + encodeURIComponent(json[i].value)}
             }
-          }
         }
         else {
           suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
@@ -149,7 +144,7 @@ const QwantSearchProvider = new Lang.Class({
 
 
 
-    /********************TODO: Get suggestions and results from Qwant********************/
+    /********************TODO: Get results from Qwant********************/
 
   },
 
