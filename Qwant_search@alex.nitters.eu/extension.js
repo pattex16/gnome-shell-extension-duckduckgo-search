@@ -9,10 +9,13 @@ const Shell = imports.gi.Shell;
 const Gio = imports.gi.Gio;
 const Params = imports.misc.params;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Soup = imports.gi.Soup;
 
 var qwantSearchProvider = null;
 
-var searchUrl = "https://www.qwant.com/?q=";
+const searchUrl = "https://www.qwant.com/?q=";
+const suggestionsUrl = "https://api.qwant.com/api/suggest";
+let _httpSession = new Soup.Session();
 
 var debug = true;
 
@@ -99,41 +102,72 @@ const QwantSearchProvider = new Lang.Class({
     }
   },
 
-  getSuggestions: function(terms) {
-    var suggestions = {
-      0: {type: "suggestion", name: "hello world", url: searchUrl + encodeURIComponent("hello world")},
-      1: {type: "suggestion", name: "hello bank", url: searchUrl + encodeURIComponent("hello bank")},
-      2: {type: "result", name: "Hello World - Wikipedia", description: "https://fr.wikipedia.org/wiki/Hello_world", url:"https://fr.wikipedia.org/wiki/Hello_world"},
-      3: {type: "result", name: "Hello World, A Merkle Company", description: "https://www.hellowold.com", url:"https://www.hellowold.com"}
-    };
-    return suggestions;
-
-    /********************TODO: Get suggestions and results from Qwant********************/
-
-  },
-
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
     this.qwantResults.set(searchUrl + encodeURIComponent(terms.join(" ")), makeResult("Search \"" + terms.join(" ") + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(terms.join(" "))));
+    logDebug("ProcessTerms");
+    this.getSuggestions(terms, callback)
+  },
 
-    //var suggestions = ["hello", "hello world", "hello kitty"];
-    var suggestions = this.getSuggestions(terms)
+  getSuggestions: function(terms, callback) {
+
+    var suggestions = {};
+    let request = Soup.form_request_new_from_hash(
+      'GET',
+      suggestionsUrl,
+      {'q':encodeURIComponent(terms)}
+    );
+    logDebug("getSuggestions: ")
+
+    _httpSession.queue_message(request, Lang.bind(this,
+      function (_httpSession, response) {
+        if (response.status_code === 200) {
+
+          let json = (JSON.parse(response.response_body.data).data.items);
+          logDebug("bodydata", response.response_body.data);
+          if (json[0].value.length < 1) {
+            var suggestion = {};
+            logDebug("No results")
+            return suggestions;
+          }
+          else {
+            var suggestion = {};
+            for (var i = 0; i < countProperties(json); i++) {
+              logDebug("Adding suggestion: " + json[i].value)
+              suggestions[i] = {type: "suggestion", name: json[i].value, url: searchUrl + encodeURIComponent(json[i].value)}
+            }
+            for (var i = 0; i < countProperties(json); i++) {logDebug("Name: " + suggestions[i].name + " Type: " + suggestions[i].type)}
+          }
+        }
+        else {
+          suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
+        }
+        this.displaySuggestions(suggestions, callback, terms);
+
+      })
+    );
+
+
+
+    /********************TODO: Get results from Qwant********************/
+
+  },
+
+  displaySuggestions: function(suggestions, callback, terms) {
     for (var i = 0; i < countProperties(suggestions); i++) {
       logDebug("type:" + suggestions[i].type);
       if (suggestions[i].type == "suggestion") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url)); }
       if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, suggestions[i].icon, suggestions[i].url)); }
       if (suggestions[i].type == "result") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
-      //this.qwantResults.set(suggestions[i]., makeResult(suggestions[i], '1'));
+
     }
-    logDebug("ProcessTerms");
+    logDebug("displaySuggestions");
     callback(this._getResultSet(terms));
   },
 
   activateResult: function(resultId, terms) {
     var result = this.qwantResults[resultId];
     logDebug("activateResult: " + resultId);
-    //if (result.type == "suggestion") {var url = searchUrl + encodeURIComponent(result.name)}
-    //if (result.type == "result") {var url = encodeURIComponent(result.url)}
     var url = resultId;
     logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
