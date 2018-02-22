@@ -16,11 +16,12 @@ To come:
  
  How to install:
  ```
- git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ ~/.local/share/gnome-shell/extensions/
- rm -f ~/.local/share/gnome-shell/extensions/{README.md,LICENSE.txt}
+ git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ ~/Downloads/git_temp/
+ cp ~/Downloads/git_temp/Qwant_search@alex.nitters.eu/ ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
+ rm -rf ~/Downloads/git_temp/
  gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu
  ```
- Restart gnome-shell : Alt+F2 and r
+ Restart gnome-shell : Alt+F2 and type "r"
  
  Uninstall:
  ```
