@@ -12,7 +12,7 @@ Screenshot:
 
 To come:
  - Results preview (Web, news, social) (may be a separate extension)
- - If you have other ideas, contact me at alex@nitters.eu
+ - If you have other ideas, open an issue : https://github.com/al34034/Qwant-Gnome-shell-integration/issues/new
  
  How to install:
  ```
@@ -21,7 +21,7 @@ To come:
  rm -rf ~/Downloads/git_temp/
  gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu
  ```
- Restart gnome-shell : Alt+F2 and type "r"
+ Restart gnome-shell : Alt+F2 and type "r" or logout/login.
  
  Uninstall:
  ```
