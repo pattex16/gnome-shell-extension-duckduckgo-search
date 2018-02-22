@@ -16,7 +16,6 @@ var qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
 const suggestionsUrl =  "https://api.qwant.com/api/suggest";
-const resultsUrl = "https://api.qwant.com/search/web?q=hello";
 let _httpSession = new Soup.Session();
 
 let button;
