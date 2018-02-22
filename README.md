@@ -1,6 +1,6 @@
 # Qwant-Gnome-shell-integration
 A Gnome-shell extension to be able to search Qwant directly from the overview (still under developement)
-Only for Gnome 3.26+
+Only for Gnome 3.26.1
 
 Features : 
  - Get suggestions and search Qwant directly from the Overview.
