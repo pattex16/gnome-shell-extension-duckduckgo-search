@@ -20,6 +20,7 @@ To come:
  rm -f ~/.local/share/gnome-shell/extensions/{README.md,LICENSE.txt}
  gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu
  ```
+ Restart gnome-shell : Alt+F2 and r
  
  Uninstall:
  ```
