@@ -5,6 +5,7 @@ Only for Gnome 3.26+
 Features : 
  - Get suggestions and search Qwant directly from the Overview.
  - Special suggestions (with icons) and Qwicks (access or search directly from websites using "&")
+ - Adds a button to the top panel to launch Qwant directly
 
 Screenshot:
 ![Screenshot](Qwant_search@alex.nitters.eu/Screen.png)
