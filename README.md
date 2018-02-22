@@ -16,8 +16,13 @@ To come:
  
  How to install:
  ```
- git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ ~/.local/share/gnome-shell/extensions/     //copy to extensions folder
- rm -f ~/.local/share/gnome-shell/extensions/README.md
- rm -f ~/.local/share/gnome-shell/extensions/LICENSE.txt    //cleanup
- gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu     //enable extension
+ git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ ~/.local/share/gnome-shell/extensions/
+ rm -f ~/.local/share/gnome-shell/extensions/{README.md,LICENSE.txt}
+ gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu
+ ```
+ 
+ Uninstall:
+ ```
+ gnome-shell-extension-tool -d Qwant_search@alex.nitters.eu
+ rm -rf ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
  ```
