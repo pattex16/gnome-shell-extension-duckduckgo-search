@@ -12,10 +12,16 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Soup = imports.gi.Soup;
 
 var qwantSearchProvider = null;
+var webSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
 const suggestionsUrl =  "https://api.qwant.com/api/suggest";
+const resultsUrl = "https://api.qwant.com/search/web?q=hello";
 let _httpSession = new Soup.Session();
+
+var webQuantity = 3;
+var newsQuantity = 3;
+var socialQuantity = 1;
 
 var debug = true;
 
@@ -105,7 +111,7 @@ const QwantSearchProvider = new Lang.Class({
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
     var joined = terms.join(" ");
-    this.qwantResults.set(searchUrl + encodeURIComponent(joined), makeResult("Search \"" + joined + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(joined)));
+    this.qwantResults.set(searchUrl + encodeURIComponent(joined) + "#", makeResult("Search \"" + joined + "\" with Qwant", " ", function() {}, searchUrl + encodeURIComponent(joined) + "#"));
     logDebug("ProcessTerms: " + joined);
     logDebug("Search with: " + joined);
     this.getSuggestions(terms, callback)
@@ -125,14 +131,27 @@ const QwantSearchProvider = new Lang.Class({
       function (_httpSession, response) {
         if (response.status_code === 200) {
 
-          let json = (JSON.parse(response.response_body.data).data.items);
+          let jsonItems = (JSON.parse(response.response_body.data).data.items);
+          let jsonSpecial = (JSON.parse(response.response_body.data).data.special);
           logDebug("bodydata", response.response_body.data);
-            var suggestions = {0: {}};
-            for (var i = 0; i < countProperties(json); i++) {
-              logDebug("Adding suggestion: " + json[i].value)
-              if (json[i].value == terms.join(" ")) {continue};
-              suggestions[i] = {type: "suggestion", name: json[i].value, url: searchUrl + encodeURIComponent(json[i].value)}
+          var suggestions = {0: {}};
+
+          for (i = 0; i < countProperties(jsonSpecial); i++) {
+            logDebug("Adding special: " + jsonSpecial[i].name)
+            if (jsonSpecial[i].name == terms.join(" ")) {continue};
+            suggestions[i] = {type: "special", name: jsonSpecial[i].name, description: jsonSpecial[i].description, url: searchUrl + encodeURIComponent(jsonSpecial[i].name)}
+          }
+
+          for (i + 1; i < countProperties(jsonItems); i++) {
+            logDebug("Adding suggestion: " + jsonItems[i].value)
+            if (jsonItems[i].value == terms.join(" ")) {continue};
+            if (jsonItems[i].value.startsWith("&")) {
+              suggestions[i] = {type: "special", name: jsonItems[i].value, description: jsonItems[i].site_name, url: searchUrl + encodeURIComponent(jsonItems[i].value)}
+            } else {
+              suggestions[i] = {type: "suggestion", name: jsonItems[i].value, url: searchUrl + encodeURIComponent(jsonItems[i].value)}
             }
+          }
+
         }
         else {
           suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
@@ -148,14 +167,49 @@ const QwantSearchProvider = new Lang.Class({
 
   },
 
+  getResults: function(suggestions, callback, terms) {
+    let request = Soup.form_request_new_from_hash(
+      'GET',
+      resultsUrl,
+      {'q':terms.join(" ")}
+    );
+    logDebug("getResults: ")
+
+    _httpSession.queue_message(request, Lang.bind(this,
+      function (_httpSession, response) {
+        if (response.status_code === 200) {
+
+          let jsonItems = (JSON.parse(response.response_body.data).data.items);
+          logDebug("bodydata", response.response_body.data);
+          var suggestions = {0: {}};
+          for (var i = 0; i < countProperties(jsonItems); i++) {
+            logDebug("Adding result: " + jsonItems[i].value)
+            if (jsonItems[i].value == terms.join(" ")) {continue};
+            suggestions[i] = {type: "result", name: jsonItems[i].title, description: "", url: searchUrl + encodeURIComponent(jsonItems[i].value)}
+          }
+        }
+        else {
+          suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
+        }
+
+        for (var i = 0; i < webQuantity; i++) {
+          var afterResult = (countProperties(suggestions)) + 1
+          logDebug("afterREsult: " + afterResult)
+          suggestions[afterResult] = {type: "result", name: "Extra, coming", description: "", url: ""}
+        }
+        this.displaySuggestions(suggestions, callback, terms);
+
+      })
+    );
+  },
+
   displaySuggestions: function(suggestions, callback, terms) {
     for (var i = 0; i < countProperties(suggestions); i++) {
       if (suggestions[i].type == "suggestion") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url)); }
-      if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, suggestions[i].icon, suggestions[i].url)); }
+      if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
       if (suggestions[i].type == "result") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
 
     }
-    logDebug("displaySuggestions");
     callback(this._getResultSet(terms));
   },
 
