@@ -15,7 +15,7 @@ To come:
  - If you have other ideas, open an issue : https://github.com/al34034/Qwant-Gnome-shell-integration/issues/new
  
  How to install (coming to extensions.gnome.org soon!) :
- **Please check your Gnome-shell version is 3.26.2** (Settings > Details > About > Gnome)
+ Warning : **Please check your Gnome-shell version is 3.26.2** (Settings > Details > About > Gnome)
  ```
  git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ /tmp/qwant_gnome/
  cp -R /tmp/qwant_gnome/Qwant_search@alex.nitters.eu/ ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
