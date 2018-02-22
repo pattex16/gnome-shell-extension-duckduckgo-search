@@ -1,6 +1,6 @@
 # Qwant-Gnome-shell-integration
 A Gnome-shell extension to be able to search Qwant directly from the overview (still under developement)
-Only for Gnome 3.26.1
+Only for Gnome 3.26.2
 
 Features : 
  - Get suggestions and search Qwant directly from the Overview.
@@ -28,3 +28,5 @@ To come:
  gnome-shell-extension-tool -d Qwant_search@alex.nitters.eu
  rm -rf ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
  ```
+
+\**Note : This extension will only be published for Gnome 3.26 and above. You can try and port t to older versions, but the results will look ugly.*
