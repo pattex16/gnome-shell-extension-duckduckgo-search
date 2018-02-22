@@ -16,9 +16,9 @@ To come:
  
  How to install:
  ```
- git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ ~/Downloads/git_temp/
- cp -R ~/Downloads/git_temp/Qwant_search@alex.nitters.eu/ ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
- rm -rf ~/Downloads/git_temp/
+ git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ /tmp/qwant_gnome/
+ cp -R /tmp/qwant_gnome/Qwant_search@alex.nitters.eu/ ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
+ rm -rf /tmp/qwant_gnome/
  gnome-shell-extension-tool -e Qwant_search@alex.nitters.eu
  ```
  Restart gnome-shell : Alt+F2 and type "r" or logout/login.
