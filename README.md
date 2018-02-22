@@ -8,6 +8,6 @@ Screenshot:
 ![Screenshot](Qwant_search@alex.nitters.eu/Screen.png)
 
 To come:
- - Special results (with icons) and quick suggestions
+ - Special suggestions (with icons) and Qwicks
  - Results preview (Web, news, social)
  - If you have other ideas, contact me at alex@nitters.eu
