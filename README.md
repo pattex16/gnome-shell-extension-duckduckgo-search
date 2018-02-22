@@ -14,7 +14,7 @@ To come:
  - Results preview (Web, news, social) (may be a separate extension)
  - If you have other ideas, open an issue : https://github.com/al34034/Qwant-Gnome-shell-integration/issues/new
  
- How to install:
+ How to install (coming to extensions.gnome.org soon!)
  ```
  git clone https://github.com/al34034/Qwant-Gnome-shell-integration/ /tmp/qwant_gnome/
  cp -R /tmp/qwant_gnome/Qwant_search@alex.nitters.eu/ ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
@@ -23,10 +23,13 @@ To come:
  ```
  Restart gnome-shell : Alt+F2 and type "r" or logout/login.
  
+ 
  Uninstall:
  ```
  gnome-shell-extension-tool -d Qwant_search@alex.nitters.eu
  rm -rf ~/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/
  ```
+ Restart gnome-shell : Alt+F2 and type "r" or logout/login.
+ 
 
-\**Note : This extension will only be published for Gnome 3.26 and above. You can try and port t to older versions, but the results will look ugly.*
+\**Note : This extension will only be published for Gnome 3.26 and above. You can try and port it to older versions, but the results will look ugly.*
