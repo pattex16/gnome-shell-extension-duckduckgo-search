@@ -19,11 +19,7 @@ const suggestionsUrl =  "https://api.qwant.com/api/suggest";
 const resultsUrl = "https://api.qwant.com/search/web?q=hello";
 let _httpSession = new Soup.Session();
 
-var webQuantity = 3;
-var newsQuantity = 3;
-var socialQuantity = 1;
-
-var debug = true;
+var debug = false;
 
 function logDebug() {
   if (debug) {
@@ -167,41 +163,6 @@ const QwantSearchProvider = new Lang.Class({
 
   },
 
-  getResults: function(suggestions, callback, terms) {
-    let request = Soup.form_request_new_from_hash(
-      'GET',
-      resultsUrl,
-      {'q':terms.join(" ")}
-    );
-    logDebug("getResults: ")
-
-    _httpSession.queue_message(request, Lang.bind(this,
-      function (_httpSession, response) {
-        if (response.status_code === 200) {
-
-          let jsonItems = (JSON.parse(response.response_body.data).data.items);
-          logDebug("bodydata", response.response_body.data);
-          var suggestions = {0: {}};
-          for (var i = 0; i < countProperties(jsonItems); i++) {
-            logDebug("Adding result: " + jsonItems[i].value)
-            if (jsonItems[i].value == terms.join(" ")) {continue};
-            suggestions[i] = {type: "result", name: jsonItems[i].title, description: "", url: searchUrl + encodeURIComponent(jsonItems[i].value)}
-          }
-        }
-        else {
-          suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
-        }
-
-        for (var i = 0; i < webQuantity; i++) {
-          var afterResult = (countProperties(suggestions)) + 1
-          logDebug("afterREsult: " + afterResult)
-          suggestions[afterResult] = {type: "result", name: "Extra, coming", description: "", url: ""}
-        }
-        this.displaySuggestions(suggestions, callback, terms);
-
-      })
-    );
-  },
 
   displaySuggestions: function(suggestions, callback, terms) {
     for (var i = 0; i < countProperties(suggestions); i++) {
