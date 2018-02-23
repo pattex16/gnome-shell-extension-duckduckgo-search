@@ -1,4 +1,3 @@
-
 // create atom project opener
 // view log: journalctl /usr/bin/gnome-session -f -o cat
 
@@ -13,10 +12,18 @@ const Params = imports.misc.params;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Soup = imports.gi.Soup;
 
+const Gettext = imports.gettext;
+
+Gettext.textdomain("Qwant_search@alex.nitters.eu");
+Gettext.bindtextdomain("Qwant_search@alex.nitters.eu", Me.path + "/locale");
+
+const _ = Gettext.gettext;
+
 var qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
-const suggestionsUrl =  "https://api.qwant.com/api/suggest";
+const suggestionsUrl = "http://localhost:9898" //"https://api.qwant.com/api/suggest";
+const qwantLocale = _("locale");
 let _httpSession = new Soup.Session();
 
 let button;
@@ -24,7 +31,7 @@ let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
-var debug = true;
+var debug = false;
 
 function logDebug() {
   if (debug) {
@@ -78,7 +85,7 @@ const QwantSearchProvider = new Lang.Class({
     this.id = 'qwant-search-' + title;
     this.appInfo = {
       get_name : function() {
-        return 'Qwant Search';
+        return _("Qwant Search");
       },
       get_icon : function() {
         return Gio.icon_new_for_string(
@@ -127,7 +134,7 @@ const QwantSearchProvider = new Lang.Class({
     var joined = terms.join(" ");
     this.qwantResults.set(
       searchUrl + encodeURIComponent(joined) + "#",
-      makeResult("Search \"" + joined + "\" with Qwant",
+      makeResult(_("first - prepend") + " \"" + joined + "\" "+ _("first - append"),
       " ",
       function() {},
       searchUrl + encodeURIComponent(joined) + "#")
@@ -143,7 +150,7 @@ const QwantSearchProvider = new Lang.Class({
     let request = Soup.form_request_new_from_hash(
       'GET',
       suggestionsUrl,
-      {'q':joined}
+      {'q':joined, 'lang': qwantLocale}
     );
     logDebug("getSuggestions: ")
 
@@ -190,8 +197,8 @@ const QwantSearchProvider = new Lang.Class({
           logDebug("No internet or request failed, cannot get suggestions");
           suggestions = [{
             type: "special",
-            name: "Request failed",
-            description: "Please check your Internet or try again later",
+            name: _("Error name"),
+            description: _("Error description"),
             url: " "
           }];
           logDebug("Array: " + JSON.stringify(suggestions));
