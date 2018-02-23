@@ -151,10 +151,8 @@ const QwantSearchProvider = new Lang.Class({
       function (_httpSession, response) {
         if (response.status_code === 200) {
           let json = JSON.parse(response.response_body.data);
-          let jsonItems = json.data.items
-          let jsonSpecial = (
-            JSON.parse(response.response_body.data).data.special
-          );
+          let jsonItems = json.data.items;
+          let jsonSpecial = json.data.special;
           logDebug("bodydata", response.response_body.data);
           var parsedItems = jsonItems
           .filter(suggestion => suggestion.value != joined)
