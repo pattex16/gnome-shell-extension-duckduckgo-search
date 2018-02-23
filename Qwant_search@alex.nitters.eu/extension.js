@@ -22,7 +22,7 @@ const _ = Gettext.gettext;
 var qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
-const suggestionsUrl = "http://localhost:9898" //"https://api.qwant.com/api/suggest";
+const suggestionsUrl = "https://api.qwant.com/api/suggest";
 const qwantLocale = _("locale");
 let _httpSession = new Soup.Session();
 
