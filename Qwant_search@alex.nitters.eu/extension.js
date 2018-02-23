@@ -175,7 +175,7 @@ const QwantSearchProvider = new Lang.Class({
             else {
               return {
                 type: "suggestion",
-                name:suggestion.value,
+                name: suggestion.value,
                 url: searchUrl + encodeURIComponent(suggestion.value)
               };
             }
@@ -185,7 +185,7 @@ const QwantSearchProvider = new Lang.Class({
           .map(suggestion => (
             {
               type: "special",
-              name: suggestion.name,
+              name: (suggestion.name + " (" + suggestion.type +")"),
               description: suggestion.description,
               url: searchUrl + encodeURIComponent(suggestion.name)
             }
