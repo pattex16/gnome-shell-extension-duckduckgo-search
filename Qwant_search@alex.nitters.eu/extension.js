@@ -24,7 +24,7 @@ let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
-var debug = true;
+var debug = false;
 
 function logDebug() {
   if (debug) {
