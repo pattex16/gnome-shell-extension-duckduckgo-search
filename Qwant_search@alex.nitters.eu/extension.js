@@ -138,28 +138,26 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getSuggestions: function(terms, callback) {
-
+    let joined = terms.join(" ");
     var suggestions = {};
     let request = Soup.form_request_new_from_hash(
       'GET',
       suggestionsUrl,
-      {'q':terms.join(" ")}
+      {'q':joined}
     );
     logDebug("getSuggestions: ")
 
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
         if (response.status_code === 200) {
-
-          let jsonItems = (
-            JSON.parse(response.response_body.data).data.items
-          );
+          let json = JSON.parse(response.response_body.data);
+          let jsonItems = json.data.items
           let jsonSpecial = (
             JSON.parse(response.response_body.data).data.special
           );
           logDebug("bodydata", response.response_body.data);
           var parsedItems = jsonItems
-          .filter(suggestion => suggestion.value != terms.join(" "))
+          .filter(suggestion => suggestion.value != joined)
           .map(suggestion => {
             if (suggestion.value.startsWith("&")) {
               return {
@@ -178,7 +176,7 @@ const QwantSearchProvider = new Lang.Class({
             }
           });
           var parsedSpecial = jsonSpecial
-          .filter(suggestion => suggestion.value != terms.join(" "))
+          .filter(suggestion => suggestion.value != joined)
           .map(suggestion => (
             {
               type: "special",
