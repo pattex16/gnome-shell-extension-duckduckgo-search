@@ -24,7 +24,7 @@ let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
-var debug = false;
+var debug = true;
 
 function logDebug() {
   if (debug) {
@@ -46,26 +46,26 @@ function makeLaunchContext(params) {
     workspace: -1,
     timestamp: global.display.get_current_time_roundtrip()
   });
-
+  
   let launchContext = global.create_app_launch_context(params.timestamp, params.workspace);
-
+  
   return launchContext;
 }
 
 function countProperties(obj) {
   var count = 0;
-
+  
   for(var prop in obj) {
     if(obj.hasOwnProperty(prop))
     ++count;
   }
-
+  
   return count;
 }
 
 const QwantSearchProvider = new Lang.Class({
   Name: 'QwantSearchProvider',
-
+  
   _init : function(title, categoryType) {
     this._categoryType = categoryType;
     this._title = title;
@@ -77,23 +77,23 @@ const QwantSearchProvider = new Lang.Class({
     };
     this.qwantResults = new Map();
   },
-
+  
   _getResultSet: function(terms) {
     logDebug("getResultSet");
     var resultIds = Array.from(this.qwantResults.keys())
-
-
+    
+    
     logDebug("found " + resultIds.length + " results" );
     return resultIds;
   },
-
+  
   getResultMetas: function(resultIds, callback) {
     logDebug("result metas for name: "+resultIds.join(" "));
     let metas = resultIds.map(id => this.getResultMeta(id));
     logDebug("metas: " + metas.join(" "));
     callback(metas);
   },
-
+  
   getResultMeta: function(resultId) {
     let result = this.qwantResults.get(resultId);
     let name = result.name;
@@ -107,7 +107,7 @@ const QwantSearchProvider = new Lang.Class({
       'createIcon' : function(size) {}
     }
   },
-
+  
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
     var joined = terms.join(" ");
@@ -116,9 +116,9 @@ const QwantSearchProvider = new Lang.Class({
     logDebug("Search with: " + joined);
     this.getSuggestions(terms, callback)
   },
-
+  
   getSuggestions: function(terms, callback) {
-
+    
     var suggestions = {};
     let request = Soup.form_request_new_from_hash(
       'GET',
@@ -130,7 +130,7 @@ const QwantSearchProvider = new Lang.Class({
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
         if (response.status_code === 200) {
-
+          
           let jsonItems = (JSON.parse(response.response_body.data).data.items);
           let jsonSpecial = (JSON.parse(response.response_body.data).data.special);
           logDebug("bodydata", response.response_body.data);
@@ -150,31 +150,36 @@ const QwantSearchProvider = new Lang.Class({
             {type: "special", name: suggestion.name, description: suggestion.description, url: searchUrl + encodeURIComponent(suggestion.name)}
           ));
           suggestions = parsedSpecial.concat(parsedItems);
+          logDebug("Array: " + JSON.stringify(suggestions));
         }
         else {
-          suggestions[0] = {type: "result", name: "Request failed", description: "Please check your Internet or try again later", url: ""}
+          logDebug("No internet or request failed, cannot get suggestions");
+          suggestions = [{type: "special", name: "Request failed", description: "Please check your Internet or try again later", url: " "}];
+          logDebug("Array: " + JSON.stringify(suggestions));
         }
         this.displaySuggestions(suggestions, callback, terms);
-
+        
       })
     );
-
-
-
+    
+    
+    
     /********************TODO: Get results from Qwant********************/
-
+    
   },
-
+  
   displaySuggestions: function(suggestions, callback, terms) {
     for (var i = 0; i < countProperties(suggestions); i++) {
-      if (suggestions[i].type == "suggestion") {this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url)); };
-      if (suggestions[i].type == "special") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
-      if (suggestions[i].type == "result") {this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url)); }
-
+      if (suggestions[i].type == "suggestion") {
+        this.qwantResults.set(suggestions[i].url, makeResult(" ", suggestions[i].name, function () {}, suggestions[i].url));
+      }
+      if (suggestions[i].type == "special") {
+        this.qwantResults.set(suggestions[i].url, makeResult(suggestions[i].name , suggestions[i].description, function () {}, suggestions[i].url));
+      }
     }
     callback(this._getResultSet(terms));
   },
-
+  
   activateResult: function(resultId, terms) {
     var result = this.qwantResults[resultId];
     logDebug("activateResult: " + resultId);
@@ -185,7 +190,7 @@ const QwantSearchProvider = new Lang.Class({
       makeLaunchContext({})
     );
   },
-
+  
   launchSearch: function(result) {
     logDebug("launchSearch: " + result.name);
     Gio.app_info_launch_default_for_uri(
@@ -193,25 +198,25 @@ const QwantSearchProvider = new Lang.Class({
       makeLaunchContext({})
     );
   },
-
+  
   getInitialResultSet: function(terms, callback, cancellable) {
     logDebug("SuggestionId: " + this.suggestionId);
     logDebug("getInitialResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable);
   },
-
+  
   filterResults: function(results, maxResults) {
     logDebug("filterResults", results, maxResults);
     return results.slice(0, maxResults);
     //return results;
   },
-
+  
   getSubsearchResultSet: function(previousResults, terms, callback, cancellable) {
     logDebug("getSubSearchResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable, );
   },
-
-
+  
+  
 });
 
 function _openQwant() {
@@ -235,7 +240,7 @@ function init(extensionMeta) {
     'gicon': Gio.icon_new_for_string(Me.path + "/icons/system_status_icon.png"),
     'style_class': 'system-status-icon'
   });
-
+  
   button.set_child(buttonIcon);
   button.connect('button-press-event', Lang.bind(this, _openQwant));
   button.connect('enter-event', function() {
