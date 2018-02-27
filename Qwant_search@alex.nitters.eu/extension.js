@@ -19,19 +19,19 @@ Gettext.bindtextdomain("Qwant_search@alex.nitters.eu", Me.path + "/locale");
 
 const _ = Gettext.gettext;
 
-var qwantSearchProvider = null;
+let qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
 const suggestionsUrl = "https://api.qwant.com/api/suggest";
 const qwantLocale = _("locale");
-let _httpSession = new Soup.Session();
+const _httpSession = new Soup.Session();
 
 let button;
 let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
-var debug = false;
+let debug = false;
 
 function logDebug() {
   if (debug) {
@@ -66,9 +66,9 @@ function makeLaunchContext(params) {
 }
 
 function countProperties(obj) {
-  var count = 0;
+  let count = 0;
 
-  for(var prop in obj) {
+  for(let prop in obj) {
     if(obj.hasOwnProperty(prop))
     ++count;
   }
@@ -101,7 +101,7 @@ const QwantSearchProvider = new Lang.Class({
 
   _getResultSet: function(terms) {
     logDebug("getResultSet");
-    var resultIds = Array.from(this.qwantResults.keys())
+    let resultIds = Array.from(this.qwantResults.keys())
 
 
     logDebug("found " + resultIds.length + " results" );
@@ -131,7 +131,7 @@ const QwantSearchProvider = new Lang.Class({
 
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
-    var joined = terms.join(" ");
+    let joined = terms.join(" ");
     this.qwantResults.set(
       searchUrl + encodeURIComponent(joined) + "#",
       makeResult(_("first - prepend") + " \"" + joined + "\" "+ _("first - append"),
@@ -146,7 +146,7 @@ const QwantSearchProvider = new Lang.Class({
 
   getSuggestions: function(terms, callback) {
     let joined = terms.join(" ");
-    var suggestions = {};
+    let suggestions = {};
     let request = Soup.form_request_new_from_hash(
       'GET',
       suggestionsUrl,
@@ -161,7 +161,7 @@ const QwantSearchProvider = new Lang.Class({
           let jsonItems = json.data.items;
           let jsonSpecial = json.data.special;
           logDebug("bodydata", response.response_body.data);
-          var parsedItems = jsonItems
+          let parsedItems = jsonItems
           .filter(suggestion => suggestion.value != joined)
           .map(suggestion => {
             if (suggestion.value.startsWith("&")) {
@@ -180,7 +180,7 @@ const QwantSearchProvider = new Lang.Class({
               };
             }
           });
-          var parsedSpecial = jsonSpecial
+          let parsedSpecial = jsonSpecial
           .filter(suggestion => suggestion.value != joined)
           .map(suggestion => (
             {
@@ -215,7 +215,7 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   displaySuggestions: function(suggestions, callback, terms) {
-    for (var i = 0; i < countProperties(suggestions); i++) {
+    for (let i = 0; i < countProperties(suggestions); i++) {
       if (suggestions[i].type == "suggestion") {
         this.qwantResults.set(
           suggestions[i].url,
@@ -243,9 +243,9 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   activateResult: function(resultId, terms) {
-    var result = this.qwantResults[resultId];
+    let result = this.qwantResults[resultId];
     logDebug("activateResult: " + resultId);
-    var url = resultId;
+    let url = resultId;
     logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
       url,
