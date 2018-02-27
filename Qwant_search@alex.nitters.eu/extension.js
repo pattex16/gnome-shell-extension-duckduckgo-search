@@ -57,7 +57,7 @@ function makeLaunchContext(params) {
     timestamp: global.display.get_current_time_roundtrip()
   });
 
-  let launchContext = global.create_app_launch_context(
+  const launchContext = global.create_app_launch_context(
     params.timestamp,
     params.workspace
   );
@@ -101,7 +101,7 @@ const QwantSearchProvider = new Lang.Class({
 
   _getResultSet: function(terms) {
     logDebug("getResultSet");
-    let resultIds = Array.from(this.qwantResults.keys())
+    const resultIds = Array.from(this.qwantResults.keys())
 
 
     logDebug("found " + resultIds.length + " results" );
@@ -110,15 +110,15 @@ const QwantSearchProvider = new Lang.Class({
 
   getResultMetas: function(resultIds, callback) {
     logDebug("result metas for name: "+resultIds.join(" "));
-    let metas = resultIds.map(id => this.getResultMeta(id));
+    const metas = resultIds.map(id => this.getResultMeta(id));
     logDebug("metas: " + metas.join(" "));
     callback(metas);
   },
 
   getResultMeta: function(resultId) {
-    let result = this.qwantResults.get(resultId);
-    let name = result.name;
-    let description = result.description;
+    const result = this.qwantResults.get(resultId);
+    const name = result.name;
+    const description = result.description;
     logDebug("result meta for name: "+result.name);
     logDebug("result meta: ", resultId);
     return {
@@ -131,7 +131,7 @@ const QwantSearchProvider = new Lang.Class({
 
   processTerms: function(terms, callback, cancellable) {
     this.qwantResults.clear();
-    let joined = terms.join(" ");
+    const joined = terms.join(" ");
     this.qwantResults.set(
       searchUrl + encodeURIComponent(joined) + "#",
       makeResult(_("first - prepend") + " \"" + joined + "\" "+ _("first - append"),
@@ -145,9 +145,9 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getSuggestions: function(terms, callback) {
-    let joined = terms.join(" ");
+    const joined = terms.join(" ");
     let suggestions = {};
-    let request = Soup.form_request_new_from_hash(
+    const request = Soup.form_request_new_from_hash(
       'GET',
       suggestionsUrl,
       {'q':joined, 'lang': qwantLocale}
@@ -157,11 +157,11 @@ const QwantSearchProvider = new Lang.Class({
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
         if (response.status_code === 200) {
-          let json = JSON.parse(response.response_body.data);
-          let jsonItems = json.data.items;
-          let jsonSpecial = json.data.special;
+          const json = JSON.parse(response.response_body.data);
+          const jsonItems = json.data.items;
+          const jsonSpecial = json.data.special;
           logDebug("bodydata", response.response_body.data);
-          let parsedItems = jsonItems
+          const parsedItems = jsonItems
           .filter(suggestion => suggestion.value != joined)
           .map(suggestion => {
             if (suggestion.value.startsWith("&")) {
@@ -180,7 +180,7 @@ const QwantSearchProvider = new Lang.Class({
               };
             }
           });
-          let parsedSpecial = jsonSpecial
+          const parsedSpecial = jsonSpecial
           .filter(suggestion => suggestion.value != joined)
           .map(suggestion => (
             {
@@ -243,9 +243,9 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   activateResult: function(resultId, terms) {
-    let result = this.qwantResults[resultId];
+    const result = this.qwantResults[resultId];
     logDebug("activateResult: " + resultId);
-    let url = resultId;
+    const url = resultId;
     logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
       url,
