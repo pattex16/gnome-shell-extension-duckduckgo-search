@@ -65,17 +65,6 @@ function makeLaunchContext(params) {
   return launchContext;
 }
 
-function countProperties(obj) {
-  let count = 0;
-
-  for(let prop in obj) {
-    if(obj.hasOwnProperty(prop))
-    ++count;
-  }
-
-  return count;
-}
-
 const QwantSearchProvider = new Lang.Class({
   Name: 'QwantSearchProvider',
 
@@ -215,30 +204,30 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   displaySuggestions: function(suggestions, callback, terms) {
-    for (let i = 0; i < countProperties(suggestions); i++) {
-      if (suggestions[i].type == "suggestion") {
+    suggestions.forEach(suggestion =>{
+      if (suggestion.type == "suggestion") {
         this.qwantResults.set(
-          suggestions[i].url,
+          suggestion.url,
           makeResult(
             " ",
-            suggestions[i].name,
+            suggestion.name,
             function () {},
-            suggestions[i].url
+            suggestion.url
           )
         );
       }
-      if (suggestions[i].type == "special") {
+      if (suggestion.type == "special") {
         this.qwantResults.set(
-          suggestions[i].url,
+          suggestion.url,
           makeResult(
-            suggestions[i].name,
-            suggestions[i].description,
+            suggestion.name,
+            suggestion.description,
             function () {},
-            suggestions[i].url
+            suggestion.url
           )
         );
       }
-    }
+    });
     callback(this._getResultSet(terms));
   },
 
