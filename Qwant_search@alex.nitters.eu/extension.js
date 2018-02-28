@@ -123,7 +123,7 @@ const QwantSearchProvider = new Lang.Class({
     const joined = terms.join(" ");
     this.qwantResults.set(
       searchUrl + encodeURIComponent(joined) + "#",
-      makeResult(_("first - prepend") + " \"" + joined + "\" "+ _("first - append"),
+      makeResult(_("direct search").replace("{terms}", joined),
       " ",
       function() {},
       searchUrl + encodeURIComponent(joined) + "#")
@@ -204,7 +204,7 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   displaySuggestions: function(suggestions, callback, terms) {
-    suggestions.forEach(suggestion =>{
+    suggestions.forEach(suggestion => {
       if (suggestion.type == "suggestion") {
         this.qwantResults.set(
           suggestion.url,
