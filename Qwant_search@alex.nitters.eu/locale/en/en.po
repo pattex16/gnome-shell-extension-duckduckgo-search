@@ -19,21 +19,26 @@ msgstr ""
 "X-Generator: Poedit 2.0.4\n"
 
 #: extension.js:26
-msgid "locale"
+#Locale used when fetching suggestions
+msgid "fr"
 msgstr "en"
 
 #: extension.js:77
-msgid "Qwant Search"
+#Name that appears beside the search results
+msgid "Recherche Qwant"
 msgstr "Qwant Search"
 
 #: extension.js:126
-msgid "direct search"
+#First result to search directly for {terms}
+msgid "Rechercher \"{terms}\" avec Qwant"
 msgstr "Search \"{terms}\" with Qwant"
 
 #: extension.js:189
-msgid "Error name"
+#Title of the message dislayed when there is no internet or the request failed
+msgid "Erreur"
 msgstr "Request failed"
 
 #: extension.js:190
-msgid "Error description"
+#Explanation of the above error ("Please check your Internet or try again later")
+msgid "Veuillez vérifier votre connexion Internet ou réessayer plus tard"
 msgstr "Please check your Internet or try again later"

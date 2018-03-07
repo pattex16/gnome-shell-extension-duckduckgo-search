@@ -23,7 +23,7 @@ let qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?q=";
 const suggestionsUrl = "https://api.qwant.com/api/suggest";
-const qwantLocale = _("locale");
+const qwantLocale = _("fr");
 const _httpSession = new Soup.Session();
 
 let button;
@@ -74,7 +74,7 @@ const QwantSearchProvider = new Lang.Class({
     this.id = 'qwant-search-' + title;
     this.appInfo = {
       get_name : function() {
-        return _("Qwant Search");
+        return _("Recherche Qwant");
       },
       get_icon : function() {
         return Gio.icon_new_for_string(
@@ -123,7 +123,7 @@ const QwantSearchProvider = new Lang.Class({
     const joined = terms.join(" ");
     this.qwantResults.set(
       searchUrl + encodeURIComponent(joined) + "#",
-      makeResult(_("direct search").replace("{terms}", joined),
+      makeResult(_("Rechercher \"{terms}\" avec Qwant").replace("{terms}", joined),
       " ",
       function() {},
       searchUrl + encodeURIComponent(joined) + "#")
@@ -186,8 +186,8 @@ const QwantSearchProvider = new Lang.Class({
           logDebug("No internet or request failed, cannot get suggestions");
           suggestions = [{
             type: "special",
-            name: _("Error name"),
-            description: _("Error description"),
+            name: _("Erreur"),
+            description: _("Veuillez vérifier votre connexion Internet ou réessayer plus tard"),
             url: " "
           }];
           logDebug("Array: " + JSON.stringify(suggestions));

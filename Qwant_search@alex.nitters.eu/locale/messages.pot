@@ -18,21 +18,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: extension.js:26
-msgid "locale"
+#Locale used when fetching suggestions
+msgid "fr"
 msgstr ""
 
 #: extension.js:77
-msgid "Qwant Search"
+#Name that appears beside the search results
+msgid "Recherche Qwant"
 msgstr ""
 
 #: extension.js:126
-msgid "direct search"
+#First result to search directly for {terms}
+msgid "Rechercher \"{terms}\" avec Qwant"
 msgstr ""
 
 #: extension.js:189
-msgid "Error name"
+#Title of the message dislayed when there is no internet or the request failed
+msgid "Erreur"
 msgstr ""
 
 #: extension.js:190
-msgid "Error description"
+#Explanation of the above error ("Please check your Internet or try again later")
+msgid "Veuillez vérifier votre connexion Internet ou réessayer plus tard"
 msgstr ""
