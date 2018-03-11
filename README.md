@@ -2,6 +2,8 @@
 A Gnome-shell extension to be able to search Qwant directly from the overview (still under developement)
 Only for Gnome 3.26.2
 
+Intall : https://extensions.gnome.org/extension/1389/qwant-search/
+
 # Features :
  - Get suggestions and search Qwant directly from the Overview.
  - Special suggestions and Qwicks (access or search directly from websites using "&")
