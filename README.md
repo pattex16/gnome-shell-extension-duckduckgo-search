@@ -30,7 +30,7 @@ Only for Gnome 3.26.2
  Restart gnome-shell : Alt+F2 and type "r" or logout/login.
  
  
- <h1>Uninstall :<h1>
+ <h1>Uninstall :</h1>
  Disable via Tweaks or extensions.gnome.org.
  
  *Or*
