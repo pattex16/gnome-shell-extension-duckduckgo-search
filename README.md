@@ -11,7 +11,7 @@ Screenshot :
 ![Screenshot](Qwant_search@alex.nitters.eu/Screen.png)
 
 # To come:
- - Results preview (Web, news, social) (may be a separate extension)
+ - Extension settings, including number of suggestions, panel icon, or default search category (all, web, news, images...)
  - If you have other ideas, open an issue : https://github.com/al34034/Qwant-Gnome-shell-integration/issues/new
  
  # How to install :
