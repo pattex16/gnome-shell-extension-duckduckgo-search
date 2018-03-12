@@ -31,7 +31,9 @@ let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
-let debug = false;
+let previousRequest = "";
+
+let debug = true;
 
 function logDebug() {
   if (debug) {
@@ -142,9 +144,11 @@ const QwantSearchProvider = new Lang.Class({
       {'q':joined, 'lang': qwantLocale}
     );
     logDebug("getSuggestions: ")
+    previousRequest = request;
 
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
+        logDebug("Statuscode: " + response.status_code);
         if (response.status_code === 200) {
           const json = JSON.parse(response.response_body.data);
           const jsonItems = json.data.items;
@@ -181,6 +185,9 @@ const QwantSearchProvider = new Lang.Class({
           ));
           suggestions = parsedSpecial.concat(parsedItems);
           logDebug("Array: " + JSON.stringify(suggestions));
+        }
+        else if (response.status_code === 1) {
+          logDebug("Request canceled, user getSubsearchResult was called again");
         }
         else {
           logDebug("No internet or request failed, cannot get suggestions");
@@ -251,6 +258,7 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getInitialResultSet: function(terms, callback, cancellable) {
+    _httpSession.abort(previousRequest);
     logDebug("SuggestionId: " + this.suggestionId);
     logDebug("getInitialResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable);
@@ -263,6 +271,7 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getSubsearchResultSet: function(previousResults, terms, callback, cancellable) {
+    _httpSession.abort(previousRequest);
     logDebug("getSubSearchResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable, );
   },
