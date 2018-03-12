@@ -33,7 +33,7 @@ let buttonIcon;
 
 let previousRequest = "";
 
-let debug = true;
+let debug = false;
 
 function logDebug() {
   if (debug) {
