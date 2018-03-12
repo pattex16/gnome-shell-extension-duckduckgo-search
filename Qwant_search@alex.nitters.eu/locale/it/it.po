@@ -1,0 +1,44 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#  <al34034.n@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-23 16:03+0100\n"
+"PO-Revision-Date: 2018-02-23 16:06+0100\n"
+"Last-Translator: al34034.n@gmail.com\n"
+"Language-Team: English\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.4\n"
+
+#: extension.js:26
+#Locale used when fetching suggestions
+msgid "fr"
+msgstr "it"
+
+#: extension.js:77
+#Name that appears beside the search results
+msgid "Recherche Qwant"
+msgstr "Cerca Qwant"
+
+#: extension.js:126
+#First result to search directly for {terms}
+msgid "Rechercher \"{terms}\" avec Qwant"
+msgstr "Cerca \"{terms}\" con Qwant"
+
+#: extension.js:189
+#Title of the message dislayed when there is no internet or the request failed
+msgid "Erreur"
+msgstr "Richiesta fallita"
+
+#: extension.js:190
+#Explanation of the above error ("Please check your Internet or try again later")
+msgid "Veuillez vérifier votre connexion Internet ou réessayer plus tard"
+msgstr "Controlla la tua connessione Internet o riprova più tardi"
