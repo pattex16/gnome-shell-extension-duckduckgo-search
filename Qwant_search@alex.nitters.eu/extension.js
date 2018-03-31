@@ -9,8 +9,10 @@ const Shell = imports.gi.Shell;
 const Gio = imports.gi.Gio;
 const Tweener = imports.ui.tweener;
 const Params = imports.misc.params;
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
 const Soup = imports.gi.Soup;
+const Convenience = Me.imports.convenience;
 
 const Gettext = imports.gettext;
 
@@ -21,7 +23,7 @@ const _ = Gettext.gettext;
 
 let qwantSearchProvider = null;
 
-const searchUrl = "https://www.qwant.com/?q=";
+const searchUrl = "https://www.qwant.com/?t={category}&q=";
 const suggestionsUrl = "https://api.qwant.com/api/suggest";
 const qwantLocale = _("fr");
 const _httpSession = new Soup.Session();
@@ -30,8 +32,6 @@ let button;
 let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
-
-let previousRequest = "";
 
 let debug = false;
 
@@ -70,9 +70,10 @@ function makeLaunchContext(params) {
 const QwantSearchProvider = new Lang.Class({
   Name: 'QwantSearchProvider',
 
-  _init : function(title, categoryType) {
-    this._categoryType = categoryType;
-    this._title = title;
+  _init : function(category, suggestionsAmount, panelButton) {
+    this._category = category;
+    this._suggestionsAmount = suggestionsAmount;
+    this._panelButton = panelButton;
     this.id = 'qwant-search-' + title;
     this.appInfo = {
       get_name : function() {
@@ -144,7 +145,6 @@ const QwantSearchProvider = new Lang.Class({
       {'q':joined, 'lang': qwantLocale}
     );
     logDebug("getSuggestions: ")
-    previousRequest = request;
 
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
@@ -186,9 +186,6 @@ const QwantSearchProvider = new Lang.Class({
           suggestions = parsedSpecial.concat(parsedItems);
           logDebug("Array: " + JSON.stringify(suggestions));
         }
-        else if (response.status_code === 1) {
-          logDebug("Request canceled, user getSubsearchResult was called again");
-        }
         else {
           logDebug("No internet or request failed, cannot get suggestions");
           suggestions = [{
@@ -203,10 +200,6 @@ const QwantSearchProvider = new Lang.Class({
 
       })
     );
-
-
-
-    /********************TODO: Get results from Qwant********************/
 
   },
 
@@ -244,7 +237,7 @@ const QwantSearchProvider = new Lang.Class({
     const url = resultId;
     logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
-      url,
+      url.replace("{category}", this.category),
       makeLaunchContext({})
     );
   },
@@ -258,7 +251,6 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getInitialResultSet: function(terms, callback, cancellable) {
-    _httpSession.abort(previousRequest);
     logDebug("SuggestionId: " + this.suggestionId);
     logDebug("getInitialResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable);
@@ -271,7 +263,6 @@ const QwantSearchProvider = new Lang.Class({
   },
 
   getSubsearchResultSet: function(previousResults, terms, callback, cancellable) {
-    _httpSession.abort(previousRequest);
     logDebug("getSubSearchResultSet: " + terms.join(" "));
     this.processTerms(terms, callback, cancellable, );
   },
@@ -327,15 +318,21 @@ function init(extensionMeta) {
 }
 
 function enable() {
+  preferences = Convenience.getSettings();
   logDebug("enable Qwant search provider");
   if (!qwantSearchProvider) {
     logDebug("enable Qwant search provider");
-    qwantSearchProvider = new QwantSearchProvider();
+    qwantSearchProvider = new QwantSearchProvider(
+      preferences.get_string('category'),
+      preferences.get_value('suggestions-amount'),
+      preferences.get_boolean('panel-button')
+    );
     Main.overview.viewSelector._searchResults._registerProvider(
       qwantSearchProvider
     );
   }
-  Main.panel._rightBox.insert_child_at_index(button, 0);
+  if (preferences.get_boolean('panel-button'))
+    Main.panel._rightBox.insert_child_at_index(button, 0);
 }
 
 function disable() {

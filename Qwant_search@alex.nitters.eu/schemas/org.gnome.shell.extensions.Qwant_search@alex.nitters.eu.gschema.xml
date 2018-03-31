@@ -1,0 +1,30 @@
+<schemalist gettext-domain="Qwant_search@alex.nitters.eu">
+  <enum id="org.gnome.shell.extensions.Qwant_search@alex.nitters.eu.category">
+    <value value="0" nick="all"/>
+    <value value="1" nick="web"/>
+    <value value="2" nick="news"/>
+    <value value="3" nick="social"/>
+    <value value="4" nick="images"/>
+    <value value="5" nick="videos"/>
+    <value value="6" nick="shopping"/>
+    <value value="7" nick="music"/>
+  </enum>
+  <schema
+    id="org.gnome.shell.extensions.Qwant_search@alex.nitters.eu"
+    path="/org/gnome/shell/extensions/Qwant_search@alex.nitters.eu/">
+    <key name="category" enum="org.gnome.shell.extensions.Qwant_search@alex.nitters.eu.category">
+      <default>'all'</default>
+      <summary>Category to open on search</summary>
+    </key>
+
+    <key name="suggestions-amount" type="i">
+      <default>5</default>
+      <summary>Number of suggestions displayed</summary>
+    </key>
+
+    <key name="panel-button" type="b">
+        <default>true</default>
+        <summary>Show the Qwant icon in the panel</summary>
+    </key>
+  </schema>
+</schemalist>
