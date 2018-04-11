@@ -1,6 +1,6 @@
 # Code of conduct
 
-Nothing much here, just a few basic rules when contributing to this project :
+Here are just a few basic rules when contributing to this project :
  - Be respectful of differing viewpoints and experiences
  - Accept constructive criticism without reacting negatively
  - Focus on what is best for the community
