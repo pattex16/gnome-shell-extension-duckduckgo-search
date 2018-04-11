@@ -32,13 +32,6 @@ const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 /**
- * initTranslations:
- * @domain: (optional): the gettext domain to use
- *
- * Initialize Gettext to load translations from extensionsdir/locale.
- * If @domain is not provided, it will be taken from metadata['gettext-domain']
- */
-/**
  * getSettings:
  * @schema: (optional): the GSettings schema id
  *
@@ -48,8 +41,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
  */
 function getSettings(schema) {
     let extension = ExtensionUtils.getCurrentExtension();
-
-    schema = schema || extension.metadata['settings-schema'];
 
     const GioSSS = Gio.SettingsSchemaSource;
 

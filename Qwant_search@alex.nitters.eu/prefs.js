@@ -10,6 +10,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
+const SETTINGS_SCHEMA = "org.gnome.shell.extensions.qwant-search";
+
 const Gettext = imports.gettext
 
 Gettext.textdomain("Qwant_search@alex.nitters.eu");
@@ -38,7 +40,7 @@ const PrefWindow = new GObject.Class({
 		this.margin = 12;
 		this.row_spacing = this.column_spacing = 6;
 
-		this._settings = Convenience.getSettings();
+		this._settings = Convenience.getSettings(SETTINGS_SCHEMA);
 
 		this.set_orientation(Gtk.Orientation.VERTICAL);
 
