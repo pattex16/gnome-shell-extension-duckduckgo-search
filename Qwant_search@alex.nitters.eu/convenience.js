@@ -41,6 +41,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
  */
 function getSettings(schema) {
     let extension = ExtensionUtils.getCurrentExtension();
+    schema = schema || extension.metadata['settings-schema'];
 
     const GioSSS = Gio.SettingsSchemaSource;
 

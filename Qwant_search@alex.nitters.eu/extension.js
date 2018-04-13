@@ -74,7 +74,7 @@ const QwantSearchProvider = new Lang.Class({
     this._category = category;
     this._suggestionsAmount = suggestionsAmount;
     this._panelButton = panelButton;
-    this.id = 'qwant-search-' + title;
+    this.id = 'qwant-search';
     this.appInfo = {
       get_name : function() {
         return _("Recherche Qwant");
@@ -318,7 +318,7 @@ function init(extensionMeta) {
 }
 
 function enable() {
-  preferences = Convenience.getSettings();
+  let preferences = Convenience.getSettings();
   logDebug("enable Qwant search provider");
   if (!qwantSearchProvider) {
     logDebug("enable Qwant search provider");
