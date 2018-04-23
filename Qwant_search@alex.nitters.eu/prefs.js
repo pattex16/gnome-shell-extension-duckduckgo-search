@@ -50,12 +50,12 @@ const QwantSearchSettingsWidget = new GObject.Class({
         // Bool Settings
 
         this._createBoolSetting("Bouton Qwant",
-            "Montrer le bouton pour accéder à Qwant depuis la barre du sytème",
+            "(NEEDS LOGOUT/LOGIN) Montrer le bouton pour accéder à Qwant depuis la barre du sytème",
             'panel-button');
 
         // Combo Settings
         this._createComboSetting("Catégorie de recherche",
-            "Choissisez la catégorie utilisée lorsque vous cliquez sur une suggestion.",
+            "(NOT WORKING) Choissisez la catégorie utilisée lorsque vous cliquez sur une suggestion.",
             'category', ["all", "web", "news", "social", "images", "videos", "shopping", "music"]);
 
     },

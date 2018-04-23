@@ -70,10 +70,7 @@ function makeLaunchContext(params) {
 const QwantSearchProvider = new Lang.Class({
   Name: 'QwantSearchProvider',
 
-  _init : function(category, suggestionsAmount, panelButton) {
-    this._category = category;
-    this._suggestionsAmount = suggestionsAmount;
-    this._panelButton = panelButton;
+  _init : function() {
     this.id = 'qwant-search';
     this.appInfo = {
       get_name : function() {
@@ -237,7 +234,7 @@ const QwantSearchProvider = new Lang.Class({
     const url = resultId;
     logDebug("url: " + url)
     Gio.app_info_launch_default_for_uri(
-      url.replace("{category}", this.category),
+      url.replace("{category}", preferences.get_string('category')),
       makeLaunchContext({})
     );
   },
@@ -322,11 +319,7 @@ function enable() {
   logDebug("enable Qwant search provider");
   if (!qwantSearchProvider) {
     logDebug("enable Qwant search provider");
-    qwantSearchProvider = new QwantSearchProvider(
-      preferences.get_string('category'),
-      preferences.get_value('suggestions-amount'),
-      preferences.get_boolean('panel-button')
-    );
+    qwantSearchProvider = new QwantSearchProvider();
     Main.overview.viewSelector._searchResults._registerProvider(
       qwantSearchProvider
     );
