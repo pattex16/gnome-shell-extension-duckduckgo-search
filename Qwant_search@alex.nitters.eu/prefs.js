@@ -1,259 +1,148 @@
-const GLib = imports.gi.GLib;
+// -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+//
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Library General Public
+//   License as published by the Free Software Foundation; either
+//   version 2 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Library General Public License for more details.
+//
+//   You should have received a copy of the GNU Library General Public
+//   License along with this library; if not, write to the Free Software
+//   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+//Original ny websearch@ciancio.net
+
 const GObject = imports.gi.GObject;
-const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
 
 const ExtensionUtils = imports.misc.extensionUtils;
+
+const Lang = imports.lang;
+const Gettext = imports.gettext.domain('gnome-shell-websearch');
+const _ = Gettext.gettext;
+
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-const Gettext = imports.gettext
+let settings = null;
 
-Gettext.textdomain("Qwant_search@alex.nitters.eu");
-Gettext.bindtextdomain("Qwant_search@alex.nitters.eu", Me.path + "/locale");
 
-const _ = Gettext.gettext;
+const QwantSearchSettingsWidget = new GObject.Class({
+    Name: 'WebSearchWindow.Prefs.WebsearchWindowSettingsWidget',
+    GTypeName: 'WebsearchtWindowSettingsWidget',
+    Extends: Gtk.Grid,
 
-let debug = false;
+    _init : function(params) {
+        this.parent(params);
+        this.orientation = Gtk.Orientation.VERTICAL;
+        this.expand = true;
+        this.column_homogeneous = true;
 
-function logDebug() {
-  if (debug) {
-    log.apply(
-      this,
-      Array.from(arguments)
-    )
-  }
-}
+        this.set_margin_left(5);
+        this.set_margin_right(5);
+        this.set_row_spacing(2);
 
-const PrefWindow = new GObject.Class({
-	Name: 'PrefWindow',
-	GTypeName: 'PrefWindow',
-	Extends: Gtk.Grid,
+        // Bool Settings
 
-	_init: function(params) {
-		this.parent(params);
-		this.margin = 12;
-		this.row_spacing = this.column_spacing = 6;
+        this._createBoolSetting("Bouton Qwant",
+            "Montrer le bouton pour accéder à Qwant depuis la barre du sytème",
+            'panel-button');
 
-		this._settings = Convenience.getSettings();
+        // Combo Settings
+        this._createComboSetting("Catégorie de recherche",
+            "Choissisez la catégorie utilisée lorsque vous cliquez sur une suggestion.",
+            'category', ["all", "web", "news", "social", "images", "videos", "shopping", "music"]);
 
-		this.set_orientation(Gtk.Orientation.VERTICAL);
+    },
 
-		// Add Widgets
-		this._widgets = {};
 
-		// Main container
-		this._widgets.box = new Gtk.Box({
-			orientation: Gtk.Orientation.VERTICAL,
-			margin: 20,
-			margin_top: 10,
-			expand: true,
-			spacing: 10,
-		});
+    /*
+     * Create Combo Widget
+    */
+    _createComboSetting : function(label, tooltip, setting, values) {
 
-		// Add widgets
-		this._addStyleSelectorWidget();
-		this._addTransparencyLevelWidget();
-		this._addBtnShadowSwitch();
-		this._addBtnShowActivitySwitch();
+        let labelwidget = new Gtk.Label({
+            halign: Gtk.Align.START,
+            label: label,
+            tooltip_text: tooltip,
+        });
+        this.add(labelwidget);
 
-		// Insert main container
-		this.add(this._widgets.box);
-	},
+        this._model = new Gtk.ListStore();
+        this._model.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING]);
 
-	_addStyleSelectorWidget: function() {
-		var label = new Gtk.Label({
-			label: '<b>'+_("Catégorie de recherche")+'</b>',
-			use_markup: true,
-			halign: Gtk.Align.START
-		});
+        let myCombo = new Gtk.ComboBox({ model: this._model, halign: Gtk.Align.END});
 
-		var styleList = new Gtk.ListStore();
-		styleList.set_column_types([
-			GObject.TYPE_STRING
-		]);
+        let currentValue = settings.get_int(setting, 0);
 
-		styleList.set(
-			styleList.append(),
-			[0],
-			[_("Tous")]
-		);
+        let selectMe = null;
+        for (let i=0; i< values.length; i++) {
+          let iter = this._model.append();
+          this._model.set(iter, [0, 1], [values[i][0],values[i][1]]);
+          if (values[i][0] == currentValue) {
+            selectMe = iter;
+          }
+        }
 
-		styleList.set(
-			styleList.append(),
-			[1],
-			[_("Web")]
-		);
+        if (selectMe != null) {
+          myCombo.set_active_iter(selectMe);
+        }
 
-		styleList.set(
-			styleList.append(),
-			[2],
-			[_("Actualités")]
-		);
+        let renderer = new Gtk.CellRendererText();
+        myCombo.pack_start(renderer, true);
+        myCombo.add_attribute(renderer, 'text', 1);
+        myCombo.connect("changed", Lang.bind(this,
+          function(obj) {
+            let[success, iter] = obj.get_active_iter();
+            if (!success) {
+              return;
+            }
+            settings.set_int(setting, this._model.get_value(iter, 0));
+          })
+        );
 
-		styleList.set(
-			styleList.append(),
-			[3],
-			[_("Social")]
-		);
+        this.attach_next_to(myCombo, labelwidget, Gtk.PositionType.RIGHT, 1, 1);
+    },
 
-		styleList.set(
-			styleList.append(),
-			[4],
-			[_("Images")]
-		);
+    /*
+     * Create Boolean Button Widget
+    */
+    _createBoolSetting : function(label, tooltip, setting) {
 
-		styleList.set(
-			styleList.append(),
-			[5],
-			[_("Vidéos")]
-		);
+        let labelwidget = new Gtk.Label({
+            halign: Gtk.Align.START,
+            label: label,
+            tooltip_text: tooltip,
+        });
+        this.add(labelwidget);
 
-		styleList.set(
-			styleList.append(),
-			[6],
-			[_("Shopping")]
-		);
+        let mySwitch = new Gtk.Switch({
+            active: settings.get_boolean(setting),
+            sensitive: true,
+            halign: Gtk.Align.END });
+        mySwitch.connect('notify::active', function(button) {
+            settings.set_boolean(setting, button.active);
+        });
 
-		styleList.set(
-			styleList.append(),
-			[7],
-			[_("Musique")]
-		);
+        this.attach_next_to(mySwitch, labelwidget, Gtk.PositionType.RIGHT, 1, 1);
+    },
+})
 
-        let rendererText = new Gtk.CellRendererText();
 
-		this._widgets.style = new Gtk.ComboBox({
-			model: styleList
-		});
-
-        this._widgets.style.pack_start (rendererText, false);
-        this._widgets.style.add_attribute (rendererText, "text", 0);
-
-        if(this._settings.get_string('category') == "web")
-        	this._widgets.style.set_active(1);
-				if(this._settings.get_string('category') == "news")
-	        this._widgets.style.set_active(2);
-				if(this._settings.get_string('category') == "social")
-	        this._widgets.style.set_active(3);
-				if(this._settings.get_string('category') == "images")
-	       	this._widgets.style.set_active(4);
-				if(this._settings.get_string('category') == "videos")
-	       	this._widgets.style.set_active(5);
-				if(this._settings.get_string('category') == "shopping")
-	        this._widgets.style.set_active(6);
-				if(this._settings.get_string('category') == "music")
-	        this._widgets.style.set_active(7);
-        else
-        	this._widgets.style.set_active(0);
-
-		let hbox = new Gtk.Box({
-			orientation: Gtk.Orientation.HORIZONTAL,
-		});
-
-		hbox.pack_start(label, true, true, 0);
-		hbox.add(this._widgets.style);
-
-		this._widgets.box.add(hbox);
-
-        this._widgets.style.connect ('changed', Lang.bind (this, this._categoryChanged));
-	},
-
-	_addTransparencyLevelWidget: function() {
-		var label = new Gtk.Label({
-			label: '<b>'+_("Nombre de suggestions")+'</b>',
-			use_markup: true,
-			halign: Gtk.Align.START
-		});
-
-		var adjustment = new Gtk.Adjustment({
-			value: this._settings.get_double('suggestions-amount'),
-			lower: 0,
-			upper: 10,
-			step_increment: 1,
-			page_increment: 1
-		});
-
-		this._widgets.transparencyLevel = new Gtk.SpinButton({
-			adjustment: adjustment
-		});
-
-		this._widgets.transparencyLevel.set_digits(2);
-
-		let hbox = new Gtk.Box({
-			orientation: Gtk.Orientation.HORIZONTAL,
-		});
-
-		hbox.pack_start(label, true, true, 0);
-		hbox.add(this._widgets.transparencyLevel);
-
-		this._widgets.box.add(hbox);
-
-		this._widgets.transparencyLevel.connect('value-changed', Lang.bind(this, this._suggestionsAmountChanged));
-	},
-
-	_addBtnShadowSwitch: function() {
-		var label = new Gtk.Label({
-			label: '<b>'+_("Bouton Qwant")+'</b>',
-			use_markup: true,
-			halign: Gtk.Align.START
-		});
-
-		this._widgets.btnShadowSwitch = new Gtk.Switch({active: this._settings.get_boolean('panel-button')});
-
-		let hbox = new Gtk.Box({
-			orientation: Gtk.Orientation.HORIZONTAL,
-		});
-
-		hbox.pack_start(label, true, true, 0);
-		hbox.add(this._widgets.btnShadowSwitch);
-
-		this._widgets.box.add(hbox);
-
-		this._widgets.btnShadowSwitch.connect ('notify::active', Lang.bind (this, this._panelButtonUpdate));
-	},
-
-	_categoryChanged: function() {
-		let selection = this._widgets.style.get_active();
-		logDebug('New category selection : ' + selection);
-		if(selection == 1)
-			this._settings.set_string('category', 'web');
-		if(selection == 2)
-			this._settings.set_string('category', 'news');
-		if(selection == 3)
-			this._settings.set_string('category', 'social');
-		if(selection == 4)
-			this._settings.set_string('category', 'images');
-		if(selection == 5)
-			this._settings.set_string('category', 'videos');
-		if(selection == 6)
-			this._settings.set_string('category', 'shopping');
-		if(selection == 7)
-			this._settings.set_string('category', 'music');
-		else
-			this._settings.set_string('category', 'all');
-	},
-
-	_suggestionsAmountChanged: function() {
-		let value = this._widgets.transparencyLevel.get_value();
-		logDebug('New suggestions amount: ' + value);
-		this._settings.set_value('suggestions-amount', value);
-	},
-
-	_panelButtonUpdate: function() {
-		let value = this._widgets.btnShadowSwitch.get_active();
-		logDebug('New panel icon value: ' + value);
-		this._settings.set_boolean('panel-button', value);
-	}
-});
 
 function init() {
+    settings = Convenience.getSettings();
 }
 
 function buildPrefsWidget() {
-	let prefWindow = new PrefWindow();
-	prefWindow.show_all();
 
-	return prefWindow;
-}
+    let widget = new QwantSearchSettingsWidget();
+    widget.show_all();
+
+    return widget;
+};
