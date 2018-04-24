@@ -21,6 +21,8 @@ Gettext.bindtextdomain("Qwant_search@alex.nitters.eu", Me.path + "/locale");
 
 const _ = Gettext.gettext;
 
+const preferences = Convenience.getSettings();
+
 let qwantSearchProvider = null;
 
 const searchUrl = "https://www.qwant.com/?t={category}&q=";
@@ -315,7 +317,6 @@ function init(extensionMeta) {
 }
 
 function enable() {
-  let preferences = Convenience.getSettings();
   logDebug("enable Qwant search provider");
   if (!qwantSearchProvider) {
     logDebug("enable Qwant search provider");

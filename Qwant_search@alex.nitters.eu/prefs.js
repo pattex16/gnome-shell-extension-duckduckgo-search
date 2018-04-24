@@ -15,10 +15,11 @@
 //   License along with this library; if not, write to the Free Software
 //   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-//Original ny websearch@ciancio.net
+//Original ny web_search_dialod@awamper.gmail.com
 
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
+const Gio = imports.gi.Gio;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -31,6 +32,17 @@ const Convenience = Me.imports.convenience;
 
 let settings = null;
 
+let debug = true;
+
+function logDebug() {
+  if (debug) {
+    log.apply(
+      this,
+      Array.from(arguments)
+    )
+  }
+}
+
 
 const QwantSearchSettingsWidget = new GObject.Class({
     Name: 'WebSearchWindow.Prefs.WebsearchWindowSettingsWidget',
@@ -42,6 +54,7 @@ const QwantSearchSettingsWidget = new GObject.Class({
         this.orientation = Gtk.Orientation.VERTICAL;
         this.expand = true;
         this.column_homogeneous = true;
+        this._rownum = 0;
 
         this.set_margin_left(5);
         this.set_margin_right(5);
@@ -49,14 +62,30 @@ const QwantSearchSettingsWidget = new GObject.Class({
 
         // Bool Settings
 
-        this._createBoolSetting("Bouton Qwant",
-            "(NEEDS LOGOUT/LOGIN) Montrer le bouton pour accéder à Qwant depuis la barre du sytème",
-            'panel-button');
+        this._createBoolSetting(
+          "Bouton Qwant",
+          'panel-button'
+          );
 
         // Combo Settings
-        this._createComboSetting("Catégorie de recherche",
-            "(NOT WORKING) Choissisez la catégorie utilisée lorsque vous cliquez sur une suggestion.",
-            'category', ["all", "web", "news", "social", "images", "videos", "shopping", "music"]);
+        let options = [
+          {title: 'Tous', value: 'all'},
+          {title: 'Web', value: 'web'},
+          {title: 'Actualités', value: 'news'},
+          {title: 'Social', value: 'social'},
+          {title: 'Images', value: 'images'},
+          {title: 'Vidéos', value: 'videos'},
+          {title: 'Shopping', value: 'shopping'},
+          {title: 'Musique', value: 'music'}
+        ];
+        this._createComboSetting(
+          "Catégorie de recherche",
+          'category',
+          options,
+          'string'
+        );
+        this.createSeparator();
+        this._createLabel("Gnome-shell needs to be restarted (logout/login) for changes to take effect");
 
     },
 
@@ -64,72 +93,101 @@ const QwantSearchSettingsWidget = new GObject.Class({
     /*
      * Create Combo Widget
     */
-    _createComboSetting : function(label, tooltip, setting, values) {
+    _createComboSetting : function(text, key, list, type) {
+      let item = new Gtk.ComboBoxText();
 
-        let labelwidget = new Gtk.Label({
-            halign: Gtk.Align.START,
-            label: label,
-            tooltip_text: tooltip,
-        });
-        this.add(labelwidget);
+              for(let i = 0; i < list.length; i++) {
+                  let title = list[i].title.trim();
+                  let id = list[i].value.toString();
+                  item.insert(-1, id, title);
+              }
 
-        this._model = new Gtk.ListStore();
-        this._model.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING]);
+              if(type === 'string') {
+                  item.set_active_id(settings.get_string(key));
+              }
+              else {
+                  item.set_active_id(settings.get_int(key).toString());
+              }
 
-        let myCombo = new Gtk.ComboBox({ model: this._model, halign: Gtk.Align.END});
+              item.connect('changed', Lang.bind(this, function(combo) {
+                  let value = combo.get_active_id();
 
-        let currentValue = settings.get_int(setting, 0);
+                  if(type === 'string') {
+                      if(settings.get_string(key) !== value) {
+                          settings.set_string(key, value);
+                      }
+                  }
+                  else {
+                      value = parseInt(value, 10);
 
-        let selectMe = null;
-        for (let i=0; i< values.length; i++) {
-          let iter = this._model.append();
-          this._model.set(iter, [0, 1], [values[i][0],values[i][1]]);
-          if (values[i][0] == currentValue) {
-            selectMe = iter;
-          }
-        }
+                      if(settings.get_int(key) !== value) {
+                          settings.set_int(key, value);
+                      }
+                  }
+              }));
 
-        if (selectMe != null) {
-          myCombo.set_active_iter(selectMe);
-        }
-
-        let renderer = new Gtk.CellRendererText();
-        myCombo.pack_start(renderer, true);
-        myCombo.add_attribute(renderer, 'text', 1);
-        myCombo.connect("changed", Lang.bind(this,
-          function(obj) {
-            let[success, iter] = obj.get_active_iter();
-            if (!success) {
-              return;
-            }
-            settings.set_int(setting, this._model.get_value(iter, 0));
-          })
-        );
-
-        this.attach_next_to(myCombo, labelwidget, Gtk.PositionType.RIGHT, 1, 1);
+              return this.add_row(text, item);
     },
+
+    add_item: function(widget, col, colspan, rowspan) {
+        this.attach(
+            widget,
+            col || 0,
+            this._rownum,
+            colspan || 2,
+            rowspan || 1
+        );
+        this._rownum++;
+
+        return widget;
+    },
+
+    add_row: function(text, widget, wrap) {
+        let label = new Gtk.Label({
+            label: text,
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        label.set_line_wrap(wrap || false);
+
+        this.attach(label, 0, this._rownum, 1, 1); // col, row, colspan, rowspan
+        this.attach(widget, 1, this._rownum, 1, 1);
+        this._rownum++;
+
+        return widget;
+    },
+
+    _createLabel: function(text, markup=null) {
+    let label = new Gtk.Label({
+        hexpand: true,
+        halign: Gtk.Align.START
+    });
+    label.set_line_wrap(true);
+
+    if(markup) label.set_markup(markup);
+    else label.set_text(text);
+
+    return this.add_item(label);
+},
+
+createSeparator: function() {
+    let separator = new Gtk.Separator({
+        orientation: Gtk.Orientation.HORIZONTAL
+    });
+
+    this.add_item(separator, 0, 2, 1);
+},
 
     /*
      * Create Boolean Button Widget
     */
-    _createBoolSetting : function(label, tooltip, setting) {
+    _createBoolSetting : function(text, key) {
+      let item = new Gtk.Switch({
+          active: settings.get_boolean(key)
+      });
+      settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        let labelwidget = new Gtk.Label({
-            halign: Gtk.Align.START,
-            label: label,
-            tooltip_text: tooltip,
-        });
-        this.add(labelwidget);
-
-        let mySwitch = new Gtk.Switch({
-            active: settings.get_boolean(setting),
-            sensitive: true,
-            halign: Gtk.Align.END });
-        mySwitch.connect('notify::active', function(button) {
-            settings.set_boolean(setting, button.active);
-        });
-
-        this.attach_next_to(mySwitch, labelwidget, Gtk.PositionType.RIGHT, 1, 1);
+      return this.add_row(text, item);
     },
 })
 
