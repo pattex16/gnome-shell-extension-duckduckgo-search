@@ -15,20 +15,22 @@
 //   License along with this library; if not, write to the Free Software
 //   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-//Original ny web_search_dialod@awamper.gmail.com
+//Original by web_search_dialog@awamper.gmail.com
 
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-
 const Lang = imports.lang;
-const Gettext = imports.gettext.domain('gnome-shell-websearch');
-const _ = Gettext.gettext;
-
+const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+
+const Gettext = imports.gettext
+
+Gettext.textdomain("Qwant_search@alex.nitters.eu");
+Gettext.bindtextdomain("Qwant_search@alex.nitters.eu", Me.path + "/locale");
+
+const _ = Gettext.gettext;
 
 let settings = null;
 
@@ -45,8 +47,8 @@ function logDebug() {
 
 
 const QwantSearchSettingsWidget = new GObject.Class({
-    Name: 'WebSearchWindow.Prefs.WebsearchWindowSettingsWidget',
-    GTypeName: 'WebsearchtWindowSettingsWidget',
+    Name: 'Qwantsearch.Prefs.QwantsearchSettingsWidget',
+    GTypeName: 'QwantsearchSettingsWidget',
     Extends: Gtk.Grid,
 
     _init : function(params) {
@@ -63,29 +65,29 @@ const QwantSearchSettingsWidget = new GObject.Class({
         // Bool Settings
 
         this._createBoolSetting(
-          "Bouton Qwant",
+          _("Bouton Qwant dans la barre système"),
           'panel-button'
           );
 
         // Combo Settings
         let options = [
-          {title: 'Tous', value: 'all'},
-          {title: 'Web', value: 'web'},
-          {title: 'Actualités', value: 'news'},
-          {title: 'Social', value: 'social'},
-          {title: 'Images', value: 'images'},
-          {title: 'Vidéos', value: 'videos'},
-          {title: 'Shopping', value: 'shopping'},
-          {title: 'Musique', value: 'music'}
+          {title: _("Tous"), value: 'all'},
+          {title: _("Web"), value: 'web'},
+          {title: _("Actualités"), value: 'news'},
+          {title: _("Social"), value: 'social'},
+          {title: _("Images"), value: 'images'},
+          {title: _("Vidéos"), value: 'videos'},
+          {title: _("Shopping"), value: 'shopping'},
+          {title: _("Musique"), value: 'music'}
         ];
         this._createComboSetting(
-          "Catégorie de recherche",
+          _("Catégorie de recherche"),
           'category',
           options,
           'string'
         );
         this.createSeparator();
-        this._createLabel("Gnome-shell needs to be restarted (logout/login) for changes to take effect");
+        this._createLabel(_("Gnome-shell doit-être redémmaré (déconnexion/reconnexion) pour que ces paramètres soient changés"));
 
     },
 

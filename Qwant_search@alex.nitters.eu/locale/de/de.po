@@ -42,3 +42,63 @@ msgstr "Anfrage fehlgeschlagen"
 #Explanation of the above error ("Please check your Internet or try again later")
 msgid "Veuillez vérifier votre connexion Internet ou réessayer plus tard"
 msgstr "Bitte überprüfen Sie Ihr Internet oder versuchen Sie es später erneut"
+
+
+
+#: prefs.js:66
+#Setting to display the panel button
+msgid "Bouton Qwant dans la barre système"
+msgstr "Qwant-Taste in der Taskleiste"
+
+
+#Settings for search category
+
+#All
+#: prefs.js:72
+msgid "Tous"
+msgstr "Alle"
+
+#Web
+#: prefs.js:73
+msgid "Web"
+msgstr "Internet"
+
+#News
+#: prefs.js:74
+msgid "Actualités"
+msgstr "News"
+
+#Social
+#: prefs.js:75
+msgid "Social"
+msgstr "Social"
+
+#Images
+#: prefs.js:76
+msgid "Images"
+msgstr "Bilder"
+
+#Videos
+#: prefs.js:77
+msgid "Vidéos"
+msgstr "Videos"
+
+#Shopping
+#: prefs.js:78
+msgid "Shopping"
+msgstr "Shopping"
+
+#Music
+#: prefs.js:79
+msgid "Musique"
+msgstr "Musik"
+
+#: prefs.js:82
+#Setting to select search category
+msgid "Catégorie de recherche"
+msgstr "Forschungskategorie"
+
+#: prefs.js:88
+#Explanation : gnome shell neds to be restarted (logout/login) for the changes to take place
+msgid "Gnome-shell doit-être redémmaré (déconnexion/reconnexion) pour que ces paramètres soient changés"
+msgstr "Gnome-Shell muss neu gestartet werden (Trennen / Wiederverbinden), damit diese Parameter geändert werden können"
