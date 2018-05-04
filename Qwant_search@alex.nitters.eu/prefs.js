@@ -87,7 +87,7 @@ const QwantSearchSettingsWidget = new GObject.Class({
           'string'
         );
         this.createSeparator();
-        this._createLabel(_("Gnome-shell doit-être redémmaré (déconnexion/reconnexion) pour que ces paramètres soient changés"));
+        this._createLabel(_("Gnome-shell doit-être redémarré (déconnexion/reconnexion) pour que ces paramètres soient changés"));
 
     },
 

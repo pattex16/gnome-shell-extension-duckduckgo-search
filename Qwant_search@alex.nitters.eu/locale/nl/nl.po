@@ -100,5 +100,5 @@ msgstr "Onderzoekscategorie"
 
 #: prefs.js:88
 #Explanation : gnome shell neds to be restarted (logout/login) for the changes to take place
-msgid "Gnome-shell doit-être redémmaré (déconnexion/reconnexion) pour que ces paramètres soient changés"
+msgid "Gnome-shell doit-être redémarré (déconnexion/reconnexion) pour que ces paramètres soient changés"
 msgstr "Gnome-shell moet opnieuw worden gestart (uitloggen/inloggen) om deze instellingen te kunnen wijzigen"
