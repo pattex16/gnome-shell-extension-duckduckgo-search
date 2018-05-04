@@ -2,6 +2,7 @@
 	"name": "Qwant Search",
 	"description": "Search Qwant directly from gnome shell",
 	"uuid": "Qwant_search@alex.nitters.eu",
-	"shell-version": ["3.26.2"],
+	"url": "https://github.com/al34034/Qwant-Gnome-shell-integration", 
+	"shell-version": ["3.26", "3.28"],
 	"settings-schema": "org.gnome.shell.extensions.Qwant_search@alex.nitters.eu"
 }
