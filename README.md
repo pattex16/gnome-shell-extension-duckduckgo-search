@@ -2,21 +2,7 @@
 Should add settings : search category, number of suggestions, display panel icon.
 
 # Errors
-Seems to break the extension :
-```
-Error: Expected type utf8 for Argument 'schema_id' but got type 'undefined'
-
-Stack trace:
-  getSettings@/home/alex/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/convenience.js:70:21
-  PrefWindow<._init@/home/alex/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/prefs.js:41:20
-  wrapper@resource:///org/gnome/gjs/modules/_legacy.js:82:22
-  buildPrefsWidget@/home/alex/.local/share/gnome-shell/extensions/Qwant_search@alex.nitters.eu/prefs.js:257:19
-  Application<._selectExtension@resource:///org/gnome/shell/extensionPrefs/main.js:91:22
-  wrapper@resource:///org/gnome/gjs/modules/_legacy.js:82:22
-  Application<._extensionFound/<@resource:///org/gnome/shell/extensionPrefs/main.js:209:17
-  main@resource:///org/gnome/shell/extensionPrefs/main.js:402:5
-  @<main>:1:43
-  ```
+Gettext ignored
 
 # Qwant-Gnome-shell-integration
 A Gnome-shell extension to be able to search Qwant directly from the overview (still under developement)
