@@ -35,6 +35,8 @@ let baseGIcon;
 let hoverGIcon;
 let buttonIcon;
 
+let requests = 0;
+
 let debug = false;
 
 function logDebug() {
@@ -144,6 +146,7 @@ const QwantSearchProvider = new Lang.Class({
       {'q':joined, 'lang': qwantLocale}
     );
     logDebug("getSuggestions: ")
+    requests++;
 
     _httpSession.queue_message(request, Lang.bind(this,
       function (_httpSession, response) {
@@ -195,7 +198,12 @@ const QwantSearchProvider = new Lang.Class({
           }];
           logDebug("Array: " + JSON.stringify(suggestions));
         }
-        this.displaySuggestions(suggestions, callback, terms);
+        requests--;
+        logDebug("Nb of requests : " + requests);
+        if (requests == 0) {
+          logDebug("No other requests, displaying suggestions");
+          this.displaySuggestions(suggestions, callback, terms);
+        }
 
       })
     );
