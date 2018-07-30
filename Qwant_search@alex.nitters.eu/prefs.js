@@ -33,7 +33,7 @@ const _ = Gettext.gettext;
 
 let settings = null;
 
-let debug = true;
+let debug = false;
 
 function logDebug() {
   if (debug) {
@@ -67,7 +67,7 @@ const QwantSearchSettingsWidget = new GObject.Class({
     // Bool Settings
 
     this._createBoolSetting(
-      _("Bouton Qwant dans la barre système"),
+      _("Bouton Qwant dans la barre système") + " " +_("(Nécéssite la déconnexion)"),
       'panel-button'
     );
 
@@ -120,20 +120,20 @@ const QwantSearchSettingsWidget = new GObject.Class({
       step_increment: 1
     };
     this._createSpinSetting(
-      _("Nombre maximal de sugestions (laissez à 0 pour ne pas limiter): "),
+      _("Nombre maximal de suggestions (laissez à 0 pour ne pas limiter)"),
       'max-suggestions',
       spin_properties,
       'int'
     ),
     this._createEntry(
-      _("Raccourcis pour les suggestions (optionel)"),
+      _("Raccourci pour les suggestions (laissez vide pour toujours montrer)"),
       'suggest-shortcut'
     );
 
     this._createSeparator();
-    this._createLabel(_("Raccourcis pour la recherche (laissez vide pour désactiver):"));
+    this._createLabel(_("Raccourcis pour la recherche (laissez vide pour désactiver)"));
     this._createBoolSetting(
-      _("Complètement désactiver les raccourcis"),
+      _("Complètement désactiver la recherche"),
       'disable-shortcuts'
     );
     this._createEntry(
@@ -164,10 +164,6 @@ const QwantSearchSettingsWidget = new GObject.Class({
       _("Musique"),
       'music-shortcut'
     );
-
-    this._createSeparator();
-    this._createLabel(_("Gnome-shell doit-être redémarré (déconnexion/reconnexion) pour que ces paramètres soient changés"));
-
   },
 
 

@@ -158,10 +158,10 @@ const QwantSearchProvider = new Lang.Class({
     const joined = terms.join(" ");
     let url = null;
     let description = null;
-    let original = ["web", "news", "social", "images", "videos", "shopping", "music"]
-    let translations = [_("Web"), _("Actualités"), _("Social"), _("Images"), _("Vidéos"), _("Shopping"), _("Musique"), ]
+    let original = ["web", "news", "social", "images", "videos", "shopping", "music", "qwant", "junior", "edu", "lite"]
+    let translations = [_("Web"), _("Actualités"), _("Social"), _("Images"), _("Vidéos"), _("Shopping"), _("Musique"), _("Qwant"), _("Qwant Junior"), _("Qwant Edu"), _("Qwant Lite")]
     if (isSearch) {
-      description = _("Continuer sur Qwant ") + translations[original.indexOf(category)];
+      description = _("Continuer sur") + " " + translations[original.indexOf(preferences.get_string("search-engine"))] + " " + translations[original.indexOf(category)];
       url = (searchUrl.replace('{category}', category)) + encodeURIComponent(joined) + "#";
     } else {
       description = _("Rechercher \"{terms}\" avec Qwant");
