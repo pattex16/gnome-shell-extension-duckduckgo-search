@@ -141,7 +141,7 @@ msgstr "Such Hinweisen"
 #: prefs.js:108
 #Setting to completely disable suggestions ("Completely disable search without shortcuts (only search shortcuts will be enabled)")
 msgid "Complètement désactiver la recherche sans raccourci (seuls les raccourcis de recherche seront activés)"
-msgstr "Suche völlig abstellen ohne Abkürzungen (Nur Such Abkürzungen warden ermöglicht)"
+msgstr "Suche völlig abstellen ohne Abkürzungen (Nur Such Abkürzungen werden ermöglicht)"
 
 #: prefs.js:113
 #Setting to show suggestions ("Show suggestions (the search option will always be available)")
