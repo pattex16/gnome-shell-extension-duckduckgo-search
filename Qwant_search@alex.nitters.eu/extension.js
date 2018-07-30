@@ -70,7 +70,7 @@ let buttonIcon;
 
 let currentRequest = null;
 
-let debug = false;
+let debug = true;
 
 function logDebug() {
   if (debug) {
@@ -160,8 +160,9 @@ const QwantSearchProvider = new Lang.Class({
     let description = null;
     let original = ["web", "news", "social", "images", "videos", "shopping", "music", "qwant", "junior", "edu", "lite"]
     let translations = [_("Web"), _("Actualités"), _("Social"), _("Images"), _("Vidéos"), _("Shopping"), _("Musique"), _("Qwant"), _("Qwant Junior"), _("Qwant Edu"), _("Qwant Lite")]
+    logDebug(preferences.get_string("search-engine"));
     if (isSearch) {
-      description = _("Continuer sur") + " " + translations[original.indexOf(preferences.get_string("search-engine"))] + " " + translations[original.indexOf(category)];
+      description = _("Continuer sur {engine} {category}");
       url = (searchUrl.replace('{category}', category)) + encodeURIComponent(joined) + "#";
     } else {
       description = _("Rechercher \"{terms}\" avec Qwant");
@@ -170,7 +171,10 @@ const QwantSearchProvider = new Lang.Class({
     this.qwantResults.set(
       url,
       makeResult(
-        _(description).replace("{terms}", joined),
+        _(description)
+          .replace("{terms}", joined)
+          .replace("{category}", translations[original.indexOf(category)])
+          .replace("{engine}", translations[original.indexOf(preferences.get_string("search-engine"))]),
         " ",
         function() {},
         url
@@ -259,7 +263,7 @@ const QwantSearchProvider = new Lang.Class({
             logDebug("Array: " + JSON.stringify(suggestions));
           }
         }
-        currentRequets = null;
+        currentRequest = null;
         logDebug("Displaying suggestions");
         this.displaySuggestions(suggestions, callback, terms, false);
       })
