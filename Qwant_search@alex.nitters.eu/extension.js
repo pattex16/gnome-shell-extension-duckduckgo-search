@@ -319,7 +319,7 @@ const QwantSearchProvider = new Lang.Class({
           }];
           logDebug("Array: " + JSON.stringify(results));
         }
-        currentRequets = null;
+        currentRequest = null;
         logDebug("Displaying suggestions");
         this.displaySuggestions(results, callback, terms, true);
       })
