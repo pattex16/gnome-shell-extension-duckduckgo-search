@@ -277,7 +277,7 @@ const QwantSearchProvider = new Lang.Class({
     const request = Soup.form_request_new_from_hash(
       'GET',
       requestUrl.replace('{category}', category),
-      {'q': joined, 'lang': qwantLocale}
+      {'q': joined, 'lang': qwantLocale, 't': category, 'uiv': '4'}
     );
     logDebug("getSearchResults: " + joined);
 
