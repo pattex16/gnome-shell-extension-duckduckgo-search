@@ -1,19 +1,3 @@
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Library General Public
-//   License as published by the Free Software Foundation; either
-//   version 3 of the License, or (at your option) any later version.
-//
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Library General Public License for more details.
-//
-//   You should have received a copy of the GNU Library General Public
-//   License along with this library; if not, write to the Free Software
-//   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-// view log: journalctl /usr/bin/gnome-session -f -o cat
-
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
 const Lang = imports.lang;
@@ -203,23 +187,21 @@ const QwantSearchProvider = new Lang.Class({
   checkKeywords: (terms, callback) => {
     logDebug("Testing for shortcuts (checkKeywords)");
 
-    let firstTerm = terms.slice(0, keyword.split(" ").length);
-    let otherTerms = terms.slice((keyword.split(" ").length), terms.length);
-    logDebug("First term of search : " + firstTerm);
-
     // Check for category keywords
     if (
       !preferences.get_boolean("disable-shortcuts")
-      && otherTerms != ""
     ) {
       let shortcuts = ["web-shortcut", "news-shortcut", "social-shortcut", "images-shortcut", "shopping-shortcut", "videos-shortcut", "music-shortcut"];
       let categories = ["web", "news", "social", "images", "shopping", "videos", "music"];
       for (i in shortcuts) {
         let shortcut = preferences.get_string(shortcuts[i]);
+        let firstTerm = terms.slice(0, shortcut.split(" ").length);
+        let otherTerms = terms.slice((shortcut.split(" ").length), terms.length);
         logDebug("Testing shortcut : '" + shortcut);
         if (
           shortcut != ""
           && shortcut == firstTerm
+          && otherTerms != ""
         ) {
           category = categories[i];
           logDebug("Shortcut for " + category + " matched : " + shortcut);
@@ -231,6 +213,7 @@ const QwantSearchProvider = new Lang.Class({
 
     // Check for suggest keyword or show if enabled
     let shortcut = preferences.get_string("suggest-shortcut");
+    let otherTerms = terms.slice((shortcut.split(" ").length), terms.length);
     if (
       shortcut != ""
       && preferences.get_boolean("activate-suggestions")
@@ -250,19 +233,19 @@ const QwantSearchProvider = new Lang.Class({
   getInitialResultSet: (terms, callback, cancellable) => {
     logDebug("Search started (getInitialResultSet)");
 
-    checkKeywords(terms, callback);
+    qwantSearchProvider.checkKeywords(terms, callback);
   },
 
   // Upon search terms update - same as getInitialResultSet
   getSubsearchResultSet: (previousResults, terms, callback, cancellable) => {
     logDebug("Search terms updated (getSubsearchResultSet)");
 
-    this.checkKeywords(terms, callback);
+    qwantSearchProvider.checkKeywords(terms, callback);
   },
 
   // Get information about a result
   getResultMetas: (resultIds, callback) => {
-    this.logDebug("Getting result info (getResultMetas)");
+    logDebug("Getting result info (getResultMetas)");
 
   },
 
@@ -318,6 +301,20 @@ function init() {
       _SetButtonIcon("base");
     }
   );
+}
+
+function makeLaunchContext(params) {
+  params = Params.parse(params, {
+    workspace: -1,
+    timestamp: global.display.get_current_time_roundtrip()
+  });
+
+  const launchContext = global.create_app_launch_context(
+    params.timestamp,
+    params.workspace
+  );
+
+  return launchContext;
 }
 
 function _openQwant() {
