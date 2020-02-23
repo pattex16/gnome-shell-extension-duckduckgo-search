@@ -1,0 +1,43 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#  <al34034.n@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-23 16:03+0100\n"
+"PO-Revision-Date: 2020-02-23 10:27+0100\n"
+"Last-Translator: al34034.n@gmail.com\n"
+"Language-Team: English\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.3\n"
+
+# Locale used when fetching suggestions
+#: extension.js:26
+msgid "fr"
+msgstr "fr"
+
+# Name that appears beside the search results
+#: extension.js:77
+msgid "Recherche Qwant"
+msgstr "Recherche DuckDuckGo"
+
+# First result to search directly for {terms}
+msgid "Rechercher \"{terms}\" avec Qwant"
+msgstr "Rechercher \"{terms}\" avec DuckDuckGo"
+
+# Title of the message dislayed when there is no internet or the request failed
+#: extension.js:189
+msgid "Erreur"
+msgstr "Erreur"
+
+# Explanation of the above error ("Please check your Internet or try again later")
+#: extension.js:190
+msgid "Veuillez vérifier votre connexion Internet ou réessayer plus tard"
+msgstr "Veuillez vérifier votre connexion Internet ou réessayer plus tard"

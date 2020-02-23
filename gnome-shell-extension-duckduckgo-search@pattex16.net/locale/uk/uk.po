@@ -1,0 +1,44 @@
+# Ukrainian translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# g00dy22 <g00dy22@mt2014.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Qwant-Gnome-shell-integration\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-23 16:03+0100\n"
+"PO-Revision-Date: 2020-02-23 10:28+0100\n"
+"Last-Translator: g00dy22 <g00dy22@mt2014.com>\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.3\n"
+
+# Locale used when fetching suggestions
+#: extension.js:26
+msgid "fr"
+msgstr "uk"
+
+# Name that appears beside the search results
+#: extension.js:77
+msgid "Recherche Qwant"
+msgstr "Пошук DuckDuckGo"
+
+# First result to search directly for {terms}
+#: extension.js:126
+msgid "Rechercher \"{terms}\" avec Qwant"
+msgstr "Шукати \"{terms}\" з DuckDuckGo"
+
+# Title of the message dislayed when there is no internet or the request failed
+#: extension.js:189
+msgid "Erreur"
+msgstr "Помилка"
+
+# Explanation of the above error ("Please check your Internet or try again later")
+#: extension.js:190
+msgid "Veuillez vÃ©rifier votre connexion Internet ou rÃ©essayer plus tard"
+msgstr "Перевірте з'єднання та спробуйте ще раз"
